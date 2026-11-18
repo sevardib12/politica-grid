@@ -415,7 +415,9 @@ export const mesas = [
       departamentos_camara: ['Caldas'],
       presidente_comision: ['Comisión V (Agro/Ambiente)'],
     },
-    decadas: d('2020s'),
+    // Alcalde de Manizales 2016–2019 (Wikipedia: Elecciones regionales de Colombia de 2015)
+    territorial: { alcalde: ['Manizales'] },
+    decadas: d('2010s-2020s'),
   }),
   build({
     id: 'gallego-leonardo',

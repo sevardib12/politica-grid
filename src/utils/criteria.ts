@@ -1,4 +1,4 @@
-import { POLITICIANS } from '../data/politicians.ts'
+import { POLITICOS_TABLERO } from '../data/politicians.ts'
 import {
   COMISIONES,
   DECADAS,
@@ -500,12 +500,12 @@ function buildAll(): Criterion[] {
 }
 
 /**
- * Catálogo de criterios con al menos un político en la base de datos.
- * Los criterios vacíos (p. ej. un ministerio sin nadie registrado) se
- * descartan para que nunca salgan en un tablero.
+ * Catálogo de criterios con al menos un político de tablero (sin contar las
+ * fichas regionales). Los criterios vacíos (p. ej. un ministerio sin nadie
+ * registrado, o una capital con solo alcaldes regionales) no salen en tableros.
  */
 export const CRITERIA: readonly Criterion[] = buildAll().filter((c) =>
-  POLITICIANS.some((p) => c.test(p)),
+  POLITICOS_TABLERO.some((p) => c.test(p)),
 )
 
 export const CRITERIA_BY_ID: ReadonlyMap<string, Criterion> = new Map(CRITERIA.map((c) => [c.id, c]))

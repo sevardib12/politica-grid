@@ -1,7 +1,7 @@
 import { Eye, Info, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { POLITICIANS_BY_ID } from '../data/politicians.ts'
-import { cellParties, explainCell, type Board } from '../utils/gridGenerator.ts'
+import { cellParties, explainCell, validForCell, type Board } from '../utils/gridGenerator.ts'
 import { PoliticianAvatar } from './PoliticianAvatar.tsx'
 
 export interface GridCellProps {
@@ -17,6 +17,9 @@ export interface GridCellProps {
   selected: boolean
   onClick: () => void
 }
+
+/** Respuestas válidas en toda la base (incluye fichas regionales, que no cuentan para la dificultad). */
+const validCount = (board: Board, cell: number) => validForCell(board, Math.floor(cell / 3), cell % 3).length
 
 export function GridCell({ board, cell, politicianId, interactive, revealed, flash, selected, onClick }: GridCellProps) {
   const [open, setOpen] = useState(false)
@@ -85,7 +88,7 @@ export function GridCell({ board, cell, politicianId, interactive, revealed, fla
         <Eye size={18} aria-hidden="true" />
         <span className="text-[10px] font-semibold leading-tight sm:text-xs">Ver respuestas</span>
         <span className="text-[10px] text-slate-400">
-          {board.counts[cell]} {board.counts[cell] === 1 ? 'válido' : 'válidos'}
+          {validCount(board, cell)} {validCount(board, cell) === 1 ? 'válido' : 'válidos'}
         </span>
       </button>
     )

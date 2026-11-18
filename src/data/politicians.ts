@@ -4,6 +4,7 @@ import { congreso } from './records/congreso.ts'
 import { territorial } from './records/territorial.ts'
 import { gabinete } from './records/gabinete.ts'
 import { mesas } from './records/mesas.ts'
+import { regional } from './records/regional.ts'
 import { FOTOS } from './photos.ts'
 
 export type { Politician } from './types.ts'
@@ -23,6 +24,7 @@ const SIN_FOTO: readonly Politician[] = [
   ...mesas,
   ...territorial,
   ...gabinete,
+  ...regional,
 ]
 
 // Los retratos (`foto_url`, `foto_fuente`, `foto_origen`) los genera
@@ -41,3 +43,9 @@ for (const p of POLITICIANS) {
 export const POLITICIANS_BY_ID: ReadonlyMap<string, Politician> = new Map(
   POLITICIANS.map((p) => [p.id, p]),
 )
+
+/**
+ * Políticos con los que se generan y calibran los tableros: todos menos las
+ * fichas de perfil regional. Las regionales siguen valiendo como respuesta.
+ */
+export const POLITICOS_TABLERO: readonly Politician[] = POLITICIANS.filter((p) => !p.perfil_regional)

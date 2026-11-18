@@ -87,6 +87,13 @@ export const DEPARTAMENTOS = [
   'Caquetá',
   'Casanare',
   'Amazonas',
+  'Arauca',
+  'Putumayo',
+  'Guaviare',
+  'Guainía',
+  'Vaupés',
+  'Vichada',
+  'San Andrés y Providencia',
 ] as const
 export type Departamento = (typeof DEPARTAMENTOS)[number]
 
@@ -120,6 +127,18 @@ export const CIUDADES = [
   'Garzón',
   'Itagüí',
   'San Gil',
+  // Capitales de departamento agregadas con los alcaldes regionales
+  'Leticia',
+  'Arauca',
+  'Florencia',
+  'Yopal',
+  'Quibdó',
+  'Riohacha',
+  'Mocoa',
+  'Inírida',
+  'San José del Guaviare',
+  'Mitú',
+  'Puerto Carreño',
 ] as const
 export type Ciudad = (typeof CIUDADES)[number]
 
@@ -241,6 +260,12 @@ export interface Politician {
   ejecutivo: Ejecutivo
   decadas_activo: Decada[]
   hitos: Hito[]
+  /**
+   * Ficha de alcance regional (gobernadores, alcaldes de capitales y concejales
+   * agregados en bloque): cuenta como respuesta válida, aparece en el buscador y
+   * en el solucionario, pero no se usa para generar ni calibrar tableros.
+   */
+  perfil_regional?: boolean
   /** Ruta local del retrato, p. ej. `/politicians/santos-calderon.jpg`. */
   foto_url?: string
   /** Quién publica la foto: «Senado de la República», «Cámara de Representantes», «Wikimedia»… */

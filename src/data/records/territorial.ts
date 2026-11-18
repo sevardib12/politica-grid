@@ -42,7 +42,8 @@ export const territorial = [
     genero: 'Femenino',
     region: 'Caribe',
     partidos: ['Partido de la U'],
-    territorial: { alcalde: ['Barranquilla'] },
+    // Gobernadora del Atlántico 2020–2023 (Wikipedia: Elecciones regionales de Colombia de 2019)
+    territorial: { alcalde: ['Barranquilla'], gobernador: ['Atlántico'] },
     ejecutivo: { ministerios: ['Vivienda'], gobiernos_gabinete: ['Duque'] },
     decadas: d('2010s-2020s'),
   }),

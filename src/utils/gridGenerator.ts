@@ -1,4 +1,4 @@
-import { POLITICIANS } from '../data/politicians.ts'
+import { POLITICIANS, POLITICOS_TABLERO } from '../data/politicians.ts'
 import type { Partido, Politician } from '../data/types.ts'
 import { CRITERIA, areRedundant, criterionOrThrow, type Criterion } from './criteria.ts'
 import { findAssignment } from './matching.ts'
@@ -39,10 +39,11 @@ function getContext(): Context {
   if (cachedContext) return cachedContext
   const criteria = CRITERIA
   const n = criteria.length
-  const m = POLITICIANS.length
+  // Solo los políticos de tablero: las fichas regionales no calibran la dificultad.
+  const m = POLITICOS_TABLERO.length
   const matches = criteria.map((c) => {
     const idx: number[] = []
-    for (let k = 0; k < m; k++) if (c.test(POLITICIANS[k])) idx.push(k)
+    for (let k = 0; k < m; k++) if (c.test(POLITICOS_TABLERO[k])) idx.push(k)
     return idx
   })
   const words = Math.ceil(m / 32)
@@ -239,7 +240,7 @@ export function generateBoard(difficulty: Difficulty, seed: string): Board {
         rows: built.rows.map((i) => ctx.criteria[i].id) as [string, string, string],
         cols: built.cols.map((i) => ctx.criteria[i].id) as [string, string, string],
         counts: built.counts,
-        solution: assignment.map((k) => POLITICIANS[k].id),
+        solution: assignment.map((k) => POLITICOS_TABLERO[k].id),
       }
     }
   }
@@ -268,7 +269,7 @@ export function cellParties(board: Board, cell: number, politician: Politician):
   return politician.partidos.length > 0 ? [politician.partidos[0]] : []
 }
 
-/** Todos los políticos de la base de datos que cumplen la casilla (fila, col). */
+/** Todos los políticos de la base de datos (incluidos los regionales) que cumplen la casilla (fila, col). */
 export function validForCell(board: Board, row: number, col: number): Politician[] {
   const rowC = criterionOrThrow(board.rows[row])
   const colC = criterionOrThrow(board.cols[col])

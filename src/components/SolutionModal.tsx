@@ -23,7 +23,10 @@ export function SolutionModal({
   const col = criterionOrThrow(board.cols[cell % 3])
   const valid = useMemo(
     () =>
-      validForCell(board, Math.floor(cell / 3), cell % 3).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')),
+      // Primero los políticos de tablero; luego las fichas regionales.
+      validForCell(board, Math.floor(cell / 3), cell % 3).sort(
+        (a, b) => Number(!!a.perfil_regional) - Number(!!b.perfil_regional) || a.nombre.localeCompare(b.nombre, 'es'),
+      ),
     [board, cell],
   )
   const placed = placedId ? POLITICIANS_BY_ID.get(placedId) : null

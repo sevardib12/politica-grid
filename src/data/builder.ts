@@ -29,6 +29,7 @@ export interface PoliticianInput {
   ejecutivo?: Partial<Ejecutivo>
   decadas: Decada[]
   hitos?: Hito[]
+  perfil_regional?: boolean
 }
 
 /**
@@ -94,5 +95,6 @@ export function build(input: PoliticianInput): Politician {
     },
     decadas_activo: input.decadas,
     hitos: [...hitos],
+    ...(input.perfil_regional ? { perfil_regional: true } : {}),
   }
 }

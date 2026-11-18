@@ -1,7 +1,7 @@
 // Validación de la base de datos y del generador de tableros.
 // Uso: npm run validate   (Node ≥ 22 ejecuta TypeScript directamente)
 
-import { POLITICIANS } from '../src/data/politicians.ts'
+import { POLITICIANS, POLITICOS_TABLERO } from '../src/data/politicians.ts'
 import { CRITERIA } from '../src/utils/criteria.ts'
 import {
   DIFFICULTIES,
@@ -19,7 +19,8 @@ const fail = (msg: string) => {
 }
 
 // ── Base de datos ─────────────────────────────────────────────────────────
-console.log(`Políticos: ${POLITICIANS.length} · Criterios con respuestas: ${CRITERIA.length}`)
+const regionales = POLITICIANS.length - POLITICOS_TABLERO.length
+console.log(`Políticos: ${POLITICIANS.length} (${POLITICOS_TABLERO.length} de tablero + ${regionales} regionales) · Criterios con respuestas: ${CRITERIA.length}`)
 if (POLITICIANS.length < 100) fail('La base de datos debe tener al menos 100 políticos')
 
 for (const p of POLITICIANS) {
@@ -38,7 +39,7 @@ for (const p of POLITICIANS) {
   // Nota: puede haber ministros sin gobierno registrado (gabinetes anteriores a 1978).
 }
 
-const tamanos = CRITERIA.map((c) => ({ c, n: POLITICIANS.filter(c.test).length })).sort((a, b) => b.n - a.n)
+const tamanos = CRITERIA.map((c) => ({ c, n: POLITICOS_TABLERO.filter(c.test).length })).sort((a, b) => b.n - a.n)
 console.log('\nCriterios más amplios:')
 for (const { c, n } of tamanos.slice(0, 8)) console.log(`  ${String(n).padStart(3)}  ${c.id}`)
 console.log('Criterios más estrechos (n ≤ 2):')
@@ -58,6 +59,7 @@ for (const difficulty of DIFFICULTIES) {
   const t0 = performance.now()
   let ok = 0
   const strictLegend = { n: 0 }
+  let regionalesEnSolucionario = 0
   const maxima: number[] = []
   const seenBoards = new Set<string>()
   for (let i = 0; i < N; i++) {
@@ -70,15 +72,20 @@ for (const difficulty of DIFFICULTIES) {
     }
     seenBoards.add(board.rows.join('|') + '#' + board.cols.join('|'))
 
-    // 1) Los conteos declarados coinciden con los reales.
+    // 1) Los conteos declarados coinciden con los reales del grupo de tablero (las fichas
+    //    regionales valen como respuesta pero no cuentan para la dificultad).
     const lists: number[][] = []
     const real: number[] = []
+    let extraRegionales = 0
     for (let r = 0; r < 3; r++)
       for (let c = 0; c < 3; c++) {
-        const valid = validForCell(board, r, c)
+        const all = validForCell(board, r, c)
+        const valid = all.filter((p) => !p.perfil_regional)
+        extraRegionales += all.length - valid.length
         real.push(valid.length)
-        lists.push(valid.map((p) => POLITICIANS.indexOf(p)))
+        lists.push(valid.map((p) => POLITICOS_TABLERO.indexOf(p)))
       }
+    regionalesEnSolucionario += extraRegionales
     if (real.join() !== board.counts.join()) fail(`${difficulty}/${i}: conteos inconsistentes`)
 
     // 2) Dificultad respetada.
@@ -106,7 +113,8 @@ for (const difficulty of DIFFICULTIES) {
   console.log(
     `\n${difficulty.padEnd(6)} ${ok}/${N} tableros · ${ms.toFixed(1)} ms/tablero · distintos: ${seenBoards.size}` +
       (difficulty === 'legend' ? ` · todas las casillas ≤2: ${strictLegend.n}` : '') +
-      ` · máx. por casilla (media): ${(maxima.reduce((a, b) => a + b, 0) / Math.max(1, maxima.length)).toFixed(1)}`,
+      ` · máx. por casilla (media): ${(maxima.reduce((a, b) => a + b, 0) / Math.max(1, maxima.length)).toFixed(1)}` +
+      ` · respuestas regionales extra por tablero: ${(regionalesEnSolucionario / Math.max(1, ok)).toFixed(1)}`,
   )
 }
 
