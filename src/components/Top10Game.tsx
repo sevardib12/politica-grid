@@ -6,8 +6,39 @@ import { describeEnd, foundCount, MAX_LIVES, MODE_LABEL, TIMED_SECONDS, type Top
 import { suggestNames } from '../top10/people.ts'
 import { shareText } from '../top10/share.ts'
 import { useTop10 } from '../top10/useTop10.ts'
+import { reportarUrl } from '../utils/enlaces.ts'
+import { ReportLink } from './Enlaces.tsx'
 import { Top10Row, type RowState } from './Top10Row.tsx'
 import { Chip } from './ui.tsx'
+
+/** Marcador de cada jugador en el duelo: vidas y filas acertadas. El activo tiene el turno. */
+function DuelScore({ state }: { state: Top10State }) {
+  const duel = state.duel
+  if (!duel) return null
+  return (
+    <div className="flex items-center gap-2 text-xs font-bold" aria-label="Marcador del duelo">
+      {([0, 1] as const).map((p) => {
+        const activo = state.status === 'playing' && duel.turn === p
+        return (
+          <span
+            key={p}
+            aria-current={activo ? 'true' : undefined}
+            className={`inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1 ${
+              activo ? 'border-gold bg-gold/10 text-gold' : 'border-line text-slate-300'
+            }`}
+          >
+            J{p + 1}
+            <span className="tracking-tight text-bad" aria-hidden="true">
+              {'♥'.repeat(duel.lives[p])}
+              <span className="text-slate-600">{'♥'.repeat(MAX_LIVES - duel.lives[p])}</span>
+            </span>
+            <span className="tabular-nums text-slate-50">{duel.scores[p]}</span>
+          </span>
+        )
+      })}
+    </div>
+  )
+}
 
 const SUGGEST_KEY = 'politica-top10:sugerencias'
 
@@ -45,11 +76,15 @@ function Hud({
   return (
     <div className="mb-4 rounded-2xl border border-line bg-panel px-4 py-3">
       <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 text-sm">
-        <div className="flex items-center gap-1" aria-label={`Vidas: ${state.lives} de ${MAX_LIVES}`}>
-          {Array.from({ length: MAX_LIVES }).map((_, i) => (
-            <Heart key={i} size={20} aria-hidden="true" className={i < state.lives ? 'fill-bad text-bad' : 'text-slate-600'} />
-          ))}
-        </div>
+        {state.duel ? (
+          <DuelScore state={state} />
+        ) : (
+          <div className="flex items-center gap-1" aria-label={`Vidas: ${state.lives} de ${MAX_LIVES}`}>
+            {Array.from({ length: MAX_LIVES }).map((_, i) => (
+              <Heart key={i} size={20} aria-hidden="true" className={i < state.lives ? 'fill-bad text-bad' : 'text-slate-600'} />
+            ))}
+          </div>
+        )}
 
         <div className="font-semibold text-slate-200">
           Aciertos: <span className="text-ok">{foundCount(state)}</span>
@@ -135,7 +170,15 @@ function ResultCard({
         <Icon size={30} aria-hidden="true" className={won ? 'text-ok' : 'text-gold'} />
         <div>
           <p className="text-lg font-black text-slate-50">
-            {foundCount(state)} / {state.challenge.size}
+            {state.duel ? (
+              <>
+                J1 {state.duel.scores[0]} – {state.duel.scores[1]} J2
+              </>
+            ) : (
+              <>
+                {foundCount(state)} / {state.challenge.size}
+              </>
+            )}
             <span className="ml-2 text-sm font-semibold text-slate-400">· {formatDuration(elapsedMs)}</span>
           </p>
           <p className="text-sm text-slate-300">{describeEnd(state)}</p>
@@ -145,6 +188,7 @@ function ResultCard({
       {state.config.daily && (
         <p className="mt-3 text-xs text-slate-400">Reto diario: solo cuenta tu primer intento del día.</p>
       )}
+      {state.duel && <p className="mt-3 text-xs text-slate-400">Los duelos no suman a tus estadísticas.</p>}
 
       <div className="mt-4 flex flex-wrap gap-2">
         <button
@@ -173,6 +217,10 @@ function ResultCard({
       </div>
 
       <pre className="mt-4 overflow-x-auto rounded-xl bg-ink/60 p-3 text-[13px] leading-relaxed text-slate-200">{shareText(state)}</pre>
+
+      <div className="mt-4 border-t border-line/70 pt-3">
+        <ReportLink href={reportarUrl(state.challenge.titulo, `Lista: ${state.challenge.titulo} (${state.challenge.id}).`)} />
+      </div>
     </section>
   )
 }
@@ -276,7 +324,7 @@ export function Top10Game({
         </button>
         <div className="flex flex-wrap items-center justify-end gap-1.5">
           <Chip tone="cyan">{TOP10_CATEGORY_LABEL[challenge.categoria]}</Chip>
-          <Chip>{MODE_LABEL[state.config.mode]}</Chip>
+          {state.duel ? <Chip tone="gold">Duelo por turnos</Chip> : <Chip>{MODE_LABEL[state.config.mode]}</Chip>}
           {state.config.daily && <Chip tone="gold">Reto diario</Chip>}
         </div>
       </div>
@@ -291,7 +339,15 @@ export function Top10Game({
       <ol className="space-y-2" aria-label={`Lista de ${challenge.size} filas`}>
         {challenge.items.map((item, i) => {
           const rowState: RowState = state.found[i] ? 'found' : playing ? 'hidden' : 'revealed'
-          return <Top10Row key={item.posicion} item={item} state={rowState} fresh={i === lastFound && playing} />
+          return (
+            <Top10Row
+              key={item.posicion}
+              item={item}
+              state={rowState}
+              fresh={i === lastFound && playing}
+              by={state.duel?.foundBy[i] ?? undefined}
+            />
+          )
         })}
       </ol>
 
@@ -340,7 +396,7 @@ export function Top10Game({
                   onFocus={() => setFocused(true)}
                   onBlur={() => setFocused(false)}
                   onKeyDown={onKeyDown}
-                  placeholder="Escribe un nombre o apellido…"
+                  placeholder={state.duel ? `Turno del Jugador ${state.duel.turn + 1}: nombre o apellido…` : 'Escribe un nombre o apellido…'}
                   autoComplete="off"
                   autoCorrect="off"
                   spellCheck={false}
@@ -359,7 +415,11 @@ export function Top10Game({
             </div>
           </form>
           <div className="mt-2 flex items-center justify-between gap-3 text-[11px] text-slate-500">
-            <span>Sin tildes también sirve. Un error cuesta una vida; los intentos vagos o ambiguos no.</span>
+            <span>
+              {state.duel
+                ? 'Un error cuesta una vida y pasa el turno. Los intentos vagos o ambiguos no.'
+                : 'Sin tildes también sirve. Un error cuesta una vida; los intentos vagos o ambiguos no.'}
+            </span>
             <button type="button" onClick={toggleSuggest} aria-pressed={suggestOn} className="shrink-0 font-semibold text-slate-400 underline-offset-2 hover:text-slate-200 hover:underline">
               Sugerencias: {suggestOn ? 'sí' : 'no'}
             </button>

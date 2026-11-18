@@ -2,7 +2,9 @@ import { Check } from 'lucide-react'
 import { useMemo } from 'react'
 import { POLITICIANS_BY_ID } from '../data/politicians.ts'
 import { criterionOrThrow } from '../utils/criteria.ts'
+import { reportarUrl } from '../utils/enlaces.ts'
 import { validForCell, type Board } from '../utils/gridGenerator.ts'
+import { ReportLink, WikiLink } from './Enlaces.tsx'
 import { PartyChips, PartyLogo } from './PartyLogo.tsx'
 import { PoliticianAvatar } from './PoliticianAvatar.tsx'
 import { Chip, Modal } from './ui.tsx'
@@ -72,6 +74,7 @@ export function SolutionModal({
                 <p className="text-sm font-bold text-slate-50">
                   {p.nombre}
                   {p.alias && <span className="ml-1.5 font-medium italic text-slate-400">“{p.alias}”</span>}
+                  <WikiLink nombre={p.nombre} className="ml-2 align-middle" />
                 </p>
                 {p.partidos.length > 0 ? (
                   <PartyChips partidos={p.partidos} size="xs" className="mt-1" />
@@ -108,6 +111,15 @@ export function SolutionModal({
           </li>
         ))}
       </ul>
+
+      <div className="mt-4 border-t border-line pt-3">
+        <ReportLink
+          href={reportarUrl(
+            `Política Grid: casilla ${row.label} × ${col.label}`,
+            `Solucionario de la casilla «${row.label} × ${col.label}» (${valid.length} políticos).`,
+          )}
+        />
+      </div>
     </Modal>
   )
 }

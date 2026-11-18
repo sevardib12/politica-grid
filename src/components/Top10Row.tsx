@@ -3,6 +3,7 @@ import type { Top10Item } from '../data/top10Lists.ts'
 import { personFor } from '../top10/people.ts'
 import { PartyLogo } from './PartyLogo.tsx'
 import { PoliticianAvatar } from './PoliticianAvatar.tsx'
+import { WikiLink } from './Enlaces.tsx'
 
 export type RowState = 'hidden' | 'found' | 'revealed'
 
@@ -23,7 +24,7 @@ function NoParty() {
  * Una fila del reto. Antes de acertar se ve: posición + logo del partido + pista + barra oculta.
  * `found` = acertada por el jugador; `revealed` = revelada al rendirse o terminar sin acertarla.
  */
-export function Top10Row({ item, state, fresh }: { item: Top10Item; state: RowState; fresh: boolean }) {
+export function Top10Row({ item, state, fresh, by }: { item: Top10Item; state: RowState; fresh: boolean; by?: number }) {
   const open = state !== 'hidden'
   const tone =
     state === 'found'
@@ -56,8 +57,14 @@ export function Top10Row({ item, state, fresh }: { item: Top10Item; state: RowSt
         </span>
         {open ? (
           <div className="mt-1">
-            <p className="text-sm font-extrabold leading-tight text-slate-50 sm:text-base">{item.nombre}</p>
+            <p className="text-sm font-extrabold leading-tight text-slate-50 sm:text-base">
+              {item.nombre}
+              {by !== undefined && (
+                <span className="ml-2 rounded-md bg-ink/70 px-1.5 py-0.5 align-middle text-[10px] font-black text-gold">J{by + 1}</span>
+              )}
+            </p>
             <p className="mt-0.5 text-[11px] leading-snug text-slate-300 sm:text-xs">{item.dato_extra}</p>
+            {state === 'found' || state === 'revealed' ? <WikiLink nombre={item.nombre} className="mt-1" /> : null}
           </div>
         ) : (
           <div className="mt-1.5 h-5 w-full max-w-[16rem] rounded-md bg-slate-700/50 sm:h-6" aria-hidden="true" />

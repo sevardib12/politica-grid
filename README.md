@@ -7,6 +7,8 @@ Dos juegos de trivia sobre la política colombiana en una sola aplicación, con 
 
 Todo corre en el cliente: sin backend, con estadísticas y racha diaria en `localStorage`.
 
+Se puede **instalar como app** desde el navegador del celular y vuelve a abrir sin conexión (`public/manifest.webmanifest` e `public/sw.js`: la red primero y la copia guardada si no hay señal). El service worker solo se registra en la versión compilada (`npm run build`), no en `npm run dev`.
+
 **Stack:** React 19 + Vite + TypeScript + Tailwind CSS v4 (modo oscuro) + `lucide-react`.
 
 ```bash
@@ -15,7 +17,7 @@ npm run dev        # http://localhost:5173
 npm run build      # tsc -b && vite build
 npm run validate   # valida la base de datos y el generador de tableros (Grid)
 npm run simulate   # simula partidas contra el motor del juego (Grid)
-npm run validate:top10  # valida las 53 listas de Top 10 y prueba la coincidencia de nombres
+npm run validate:top10  # valida las 59 listas de Top 10 y prueba la coincidencia de nombres
 npm run fotos      # descarga retratos de los políticos a public/politicians/
 npm run logos      # descarga logos de partidos a public/parties/
 ```
@@ -160,22 +162,28 @@ Cada reto es una lista de **10 o 5 filas** numeradas. De cada fila se ve, antes 
 | **Fallos** | 3 vidas. Un nombre que no está en la lista cuesta una; un intento vago o ambiguo no. |
 | **Rendirse** | Botón de bandera (pide confirmar): revela las filas que faltan con su `dato_extra`. |
 | **Modo de tiempo** | **Normal** (sin límite) o **Contrarreloj 2 min** (120 s en cuenta regresiva; al llegar a 0 termina la partida). |
-| **Reto diario** | La misma lista para todos cada día: recorre las 53 listas en un orden fijo y mezclado, sin repetir hasta agotarlas. Solo cuenta el primer intento. La **racha** cuenta los días en que se aciertan **todas** las filas. |
+| **Reto diario** | La misma lista para todos cada día: recorre las 59 listas en un orden fijo y mezclado, sin repetir hasta agotarlas. Solo cuenta el primer intento. La **racha** cuenta los días en que se aciertan **todas** las filas. Las listas añadidas después del 17 de noviembre de 2026 entran solo desde el 18; antes de esa fecha el ciclo es el anterior (`top10/daily.ts`), para no cambiar retos ya publicados. |
 | **Partida libre** | Categoría (o «Aleatoria») + modo de tiempo. |
-| **Compartir** | Texto con emojis: `1️⃣🟩 2️⃣🟩 3️⃣🟥 …`, vidas y modo. |
+| **Duelo por turnos** | Dos jugadores en el mismo teléfono. Se turnan: acertar suma la fila y pasa el turno; un nombre que no está cuesta una vida a quien lo escribió y también pasa el turno. Cada uno tiene 3 vidas, sin contrarreloj. Los duelos no suman a las estadísticas. |
+| **Compartir** | Texto con emojis: `1️⃣🟩 2️⃣🟩 3️⃣🟥 …`, vidas y modo (o el marcador del duelo). |
+| **Wikipedia y reporte** | Cada fila revelada enlaza a su búsqueda en Wikipedia (es). «¿Un dato no cuadra?» abre un aviso prellenado en GitHub con la lista o la casilla. |
 
 **Coincidencia de nombres** (`src/top10/match.ts`): sin tildes ni mayúsculas, se acepta el nombre completo, un alias o cualquier tramo del nombre que incluya un apellido (`Galán`, `Carlos Fernando Galán`, `Lucho Garzón`, `Fico`, `de la Espriella`). Un nombre de pila suelto (`Gustavo`) no cuenta. Se perdona una errata (dos si el texto tiene 9 o más letras). Si lo escrito sirve para dos filas (los dos *Jaime Pumarejo* de Barranquilla) o es demasiado vago, el juego avisa sin quitar vida y, entre homónimos, se asigna la fila que falta. El autocompletado sugiere nombres de **todo** el juego (no solo de la lista actual), para no delatar las respuestas, y se puede apagar.
 
 ### Las listas
 
-`src/data/top10Lists.ts` reúne **53 listas** (30 de 10 filas y 23 de 5), 415 filas y 288 personas, con el esquema `Top10Challenge` → `Top10Item { posicion, nombre, aliases, partido, pista_visible, dato_extra }` más `fuente` y `nota` por lista (se muestran al terminar). `partido` es un `Partido` del catálogo o `null` (independiente o movimiento sin entrada): con `null` se pinta un marcador neutro.
+`src/data/top10Lists.ts` reúne **59 listas** (36 de 10 filas y 23 de 5), 475 filas y 344 personas, con el esquema `Top10Challenge` → `Top10Item { posicion, nombre, aliases, partido, pista_visible, dato_extra }` más `fuente` y `nota` por lista (se muestran al terminar). `partido` es un `Partido` del catálogo o `null` (independiente o movimiento sin entrada): con `null` se pinta un marcador neutro.
 
 | Categoría | Listas |
 | --- | --- |
-| **Últimos en el cargo** (23) | Presidentes · vicepresidentes · alcaldes de Bogotá, Medellín, Cali y Barranquilla · gobernadores de Antioquia (5) · presidentes del Senado y de la Cámara · ministros de Hacienda, Interior, Defensa, Educación, Salud, Comercio, Transporte y Ambiente · cancilleres · ministros de Trabajo y de Minas (5) · procuradores, contralores y fiscales (5) |
+| **Últimos en el cargo** (27) | Presidentes · vicepresidentes · alcaldes de Bogotá, Medellín, Cali y Barranquilla · gobernadores de Antioquia (5) · presidentes del Senado y de la Cámara · ministros de Hacienda, Interior, Defensa, Educación, Salud, Comercio, Transporte y Ambiente · cancilleres · ministros de Trabajo y de Minas (5) · ministros de Justicia, Agricultura, Vivienda y TIC (10 cada una) · procuradores, contralores y fiscales (5) |
 | **Más votados en Congreso** (3) | Senado 2022 (5), 2018 y 2014 |
-| **Gobernaciones, alcaldías y concejos** (14) | Alcaldes de Bogotá por votación total y por porcentaje (5) · gobernadores más votados de 2011, 2015, 2019 y 2023 · alcaldes de capitales más votados de esas mismas elecciones · gobernadores 2023 con mayor porcentaje (5) · gobernadoras y alcaldesas de capitales más votadas 2011–2023 (5) · concejales electos de Barranquilla 2023 más votados |
+| **Gobernaciones, alcaldías y concejos** (16) | Alcaldes de Bogotá por votación total y por porcentaje (5) · gobernadores más votados de 2011, 2015, 2019 y 2023 · alcaldes de capitales más votados de esas mismas elecciones · gobernadores 2023 con mayor porcentaje (5) · gobernadoras y alcaldesas de capitales más votadas 2011–2023 (5) · concejales electos más votados de Barranquilla, Bogotá y Medellín 2023 |
 | **Presidenciales e hitos** (13) | Primera vuelta de 1994, 1998, 2002, 2006, 2010, 2014, 2018, 2022 y 2026 (5) · últimos 5 derrotados en segunda vuelta · 5 mujeres más votadas · top 10 de votos en una segunda y en una primera vuelta |
+
+Las listas de **concejales de Bogotá y Medellín 2023** salen de las tablas de Wikipedia que traen el voto de cada persona; las de **Cali 2023** no están porque la página solo trae votos por partido y no encontré otra fuente verificable (la Registraduría o el Observatorio Cali Visible serían las fuentes). **Senado 2026** tampoco entró: las fuentes no coinciden en las cifras y el escrutinio por persona no está publicado de forma verificable.
+
+Partidos de los ministros: las tablas de Vivienda y TIC en Wikipedia registran la afiliación de cada titular; las de Justicia y Agricultura no, así que esas filas quedan sin marcar salvo Juan Guillermo Zuluaga (Partido de la U, según la base).
 
 Reglas de las listas «Últimos…»: la fila 1 es la más reciente; **cada persona cuenta una vez**, por su periodo más reciente (Peñalosa, Mockus o Char aparecen una sola vez aunque hayan repetido), y **no se cuentan interinos ni encargados**.
 
@@ -185,14 +193,14 @@ Todos los datos se contrastaron en noviembre de 2026 con Wikipedia (es/en: anexo
 
 - **Cifras de votos**: Wikipedia da el escrutinio en unas elecciones y el preconteo en otras, y a veces las dos con diferencias pequeñas (p. ej., Petro en 2022: 11.281.013 o 11.292.758 votos en la segunda vuelta). Se usa una sola fuente por lista y se avisa en `nota`; el orden de las filas no cambia entre fuentes. Las cifras de Senado 2022 son del preconteo; las de Senado 2014 y 2018, de la tabla de senadores electos de Wikipedia. **El 5.º puesto de la primera vuelta de 2022 (John Milton Rodríguez, 271.386) viene de la edición en inglés**; los otros cuatro, de la edición en español.
 - **Pedido que no se pudo cumplir tal cual**:
-  - *Cámara por Bogotá, Antioquia, Valle y Atlántico (2022)* y *concejales de Bogotá (2019 y 2023) y de Medellín (2023)*: faltan. Los votos **por candidato** solo están completos en el sitio de la Registraduría (no consultable de forma automática); Wikipedia solo trae votos por partido y las notas de prensa mezclan preconteo y escrutinio y no alcanzan para un ranking de diez nombres. Se prefirió no publicarlas antes que inventar o adivinar.
+  - *Cámara por Bogotá, Antioquia, Valle y Atlántico (2022)* y *concejales de Bogotá 2019 y de Cali 2023*: faltan. Los votos **por candidato** solo están completos en el sitio de la Registraduría (no consultable de forma automática). Los concejales de Bogotá y Medellín 2023 sí están porque sus tablas de Wikipedia traen el voto de cada persona; en Cali, la página solo trae votos por partido y la prensa no alcanza para un ranking de diez nombres. Se prefirió no publicarlas antes que inventar o adivinar.
   - *Senado 2022 (Top 10)* quedó en **Top 5**: solo hay cinco filas verificadas.
   - *Últimos 10 derrotados en segunda vuelta (1994–2022)* quedó en **Top 5**: solo ha habido siete segundas vueltas (1994, 1998, 2010, 2014, 2018, 2022 y 2026).
   - *Top 5 gobernadores de Antioquia más votados* y *constituyentes de 1991*: no se hallaron votos por candidato; en su lugar, «Últimos 5 gobernadores de Antioquia».
   - *«Presidentes desde Betancur hasta Petro»* son 9 nombres; con Abelardo de la Espriella (posesionado el 7 de agosto de 2026) son 10.
 - Los alcaldes de 1988–1990 de Barranquilla son un caso especial: ganó Jaime Pumarejo Certain, pero el Consejo de Estado anuló mesas y declaró ganador a su primo Gustavo Certain Duncan.
 
-- **Listas regionales** (`top10/regionales.ts`): votos y porcentajes de los ganadores según las tablas de Wikipedia de las elecciones regionales de 2011, 2015, 2019 y 2023, las mismas de las fichas regionales. Pueden diferir un poco del escrutinio oficial (Galán 2023: 1.499.734 aquí y 1.497.596 en El Tiempo). Tres filas de la fuente estaban incompletas: Pasto 2023 sin votos (no entra en el top: unos 74.000 según la prensa), Santa Marta 2023 sin porcentaje y Riohacha 2023 con una errata («35;67%»). Por eso no hay lista de alcaldes por porcentaje. La de concejales de Barranquilla solo incluye a los elegidos.
+- **Listas regionales** (`top10/regionales.ts`): votos y porcentajes de los ganadores según las tablas de Wikipedia de las elecciones regionales de 2011, 2015, 2019 y 2023, las mismas de las fichas regionales. Pueden diferir un poco del escrutinio oficial (Galán 2023: 1.499.734 aquí y 1.497.596 en El Tiempo). Tres filas de la fuente estaban incompletas: Pasto 2023 sin votos (no entra en el top: unos 74.000 según la prensa), Santa Marta 2023 sin porcentaje y Riohacha 2023 con una errata («35;67%»). Por eso no hay lista de alcaldes por porcentaje. Las listas de concejales de Barranquilla, Bogotá y Medellín 2023 solo incluyen a los elegidos y excluyen las listas cerradas (su cifra es de la lista, no de cada persona). En Medellín también se excluye a Juan Carlos Upegui: sus 95.863 votos coinciden con su votación como candidato a la alcaldía.
 
 Para agregar una lista, escribe una entrada con `lista({...})` en el archivo de `src/data/top10/` que corresponda (cada fila es `[nombre, aliases, partido, pista, extra]`) y corre `npm run validate:top10`: comprueba posiciones, que el nombre y cada alias lleven a su fila, que los votos bajen (o los años retrocedan) fila a fila y los avisos de aliases ambiguos.
 

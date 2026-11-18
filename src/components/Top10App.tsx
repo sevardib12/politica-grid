@@ -11,7 +11,7 @@ type Screen = { name: 'home' } | { name: 'game'; config: Top10Config; id: number
 /** Política Top 10: pantalla de inicio y partida. */
 export function Top10App() {
   const [screen, setScreen] = useState<Screen>({ name: 'home' })
-  const [settings, setSettings] = useState<Top10Settings>({ category: 'aleatoria', mode: 'normal' })
+  const [settings, setSettings] = useState<Top10Settings>({ category: 'aleatoria', mode: 'normal', players: 1 })
   const [stats, setStats] = useState<Top10Stats>(() => loadTop10Stats())
   const statsRef = useRef(stats)
 
@@ -24,10 +24,19 @@ export function Top10App() {
     start({ challengeId: dailyChallengeId(key), mode: 'normal', daily: true, dateKey: key })
   }
 
+  // El duelo no tiene contrarreloj: siempre es sin límite de tiempo.
   const playFree = (avoid?: string) =>
-    start({ challengeId: randomChallengeId(settings.category, avoid), mode: settings.mode, daily: false, dateKey: null })
+    start({
+      challengeId: randomChallengeId(settings.category, avoid),
+      mode: settings.players === 2 ? 'normal' : settings.mode,
+      daily: false,
+      dateKey: null,
+      players: settings.players,
+    })
 
   const handleFinish = useCallback((state: Top10State) => {
+    // Los duelos no cuentan en las estadísticas personales: son de dos personas.
+    if (state.duel) return
     const next = recordTop10Game(statsRef.current, state)
     statsRef.current = next
     setStats(next)

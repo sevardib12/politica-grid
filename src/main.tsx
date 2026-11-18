@@ -8,3 +8,12 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>,
 )
+
+// Instalable y jugable sin conexión: solo en la versión publicada (no en `npm run dev`).
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch(() => {
+      // Sin service worker el juego sigue funcionando en línea; no hace falta avisar.
+    })
+  })
+}

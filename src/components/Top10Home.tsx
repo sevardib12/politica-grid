@@ -3,13 +3,14 @@ import { useState } from 'react'
 import { TOP10_BY_ID, TOP10_CATEGORY_LABEL, TOP10_LISTS, type Top10Category } from '../data/top10Lists.ts'
 import { currentStreak, dateKey } from '../game/stats.ts'
 import { dailyChallengeId, type CategoryChoice } from '../top10/daily.ts'
-import { MAX_LIVES, MODE_LABEL, TIMED_SECONDS, type Top10Mode } from '../top10/engine.ts'
+import { MAX_LIVES, MODE_LABEL, TIMED_SECONDS, type Top10Mode, type Top10Players } from '../top10/engine.ts'
 import type { Top10Stats } from '../top10/stats.ts'
 import { Chip, Segmented } from './ui.tsx'
 
 export interface Top10Settings {
   category: CategoryChoice
   mode: Top10Mode
+  players: Top10Players
 }
 
 const CATEGORIES: Top10Category[] = ['cargos', 'congreso', 'alcaldias', 'presidenciales']
@@ -145,14 +146,26 @@ export function Top10Home({
           </fieldset>
 
           <Segmented
-            label="Modo de tiempo"
-            value={settings.mode}
-            onChange={(mode) => onSettings({ ...settings, mode })}
+            label="Jugadores"
+            value={settings.players}
+            onChange={(players) => onSettings({ ...settings, players })}
             options={[
-              { value: 'normal', label: MODE_LABEL.normal, hint: 'sin límite' },
-              { value: 'contrarreloj', label: MODE_LABEL.contrarreloj, hint: `${TIMED_SECONDS} s en cuenta regresiva` },
+              { value: 1, label: 'Un jugador', hint: 'tú solo' },
+              { value: 2, label: 'Duelo por turnos', hint: 'dos en este mismo teléfono' },
             ]}
           />
+
+          {settings.players === 1 && (
+            <Segmented
+              label="Modo de tiempo"
+              value={settings.mode}
+              onChange={(mode) => onSettings({ ...settings, mode })}
+              options={[
+                { value: 'normal', label: MODE_LABEL.normal, hint: 'sin límite' },
+                { value: 'contrarreloj', label: MODE_LABEL.contrarreloj, hint: `${TIMED_SECONDS} s en cuenta regresiva` },
+              ]}
+            />
+          )}
         </div>
 
         <button
@@ -198,6 +211,7 @@ export function Top10Home({
             <li>Si lo escrito es muy vago («Luis») o sirve para dos personas de la lista, te avisamos sin quitarte vida.</li>
             <li>Puedes rendirte (🏳) para ver las filas que faltan con sus datos completos.</li>
             <li>En «Últimos…» la fila 1 es el más reciente; en las listas de votos, el más votado.</li>
+            <li>En el duelo, los dos se turnan en este mismo teléfono: acertar suma la fila y pasa el turno; un nombre que no está cuesta una vida y también pasa el turno. Cada uno tiene 3 vidas y gana quien más filas acierte.</li>
           </ul>
         )}
       </section>
