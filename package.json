@@ -12,7 +12,8 @@
     "simulate": "node scripts/simulate.ts",
     "fotos": "node scripts/fetch-official-photos.mjs",
     "logos": "node scripts/fetch-party-logos.mjs",
-    "validate:top10": "node scripts/validate-top10.ts"
+    "validate:top10": "node scripts/validate-top10.ts",
+    "validate:gabinete": "node scripts/validate-gabinete.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.5",

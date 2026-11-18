@@ -1,10 +1,11 @@
-import { LayoutGrid, ListOrdered, type LucideIcon } from 'lucide-react'
+import { Landmark, LayoutGrid, ListOrdered, type LucideIcon } from 'lucide-react'
 
-export type GameId = 'grid' | 'top10'
+export type GameId = 'grid' | 'top10' | 'gabinete'
 
 const GAMES: { id: GameId; label: string; short: string; Icon: LucideIcon }[] = [
   { id: 'grid', label: 'Política Grid', short: 'Grid', Icon: LayoutGrid },
   { id: 'top10', label: 'Política Top 10', short: 'Top 10', Icon: ListOrdered },
+  { id: 'gabinete', label: 'Arma el Gabinete', short: 'Gabinete', Icon: Landmark },
 ]
 
 /** Barra superior del hub: alterna entre los dos juegos sin recargar la página. */

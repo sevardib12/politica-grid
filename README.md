@@ -18,6 +18,7 @@ npm run build      # tsc -b && vite build
 npm run validate   # valida la base de datos y el generador de tableros (Grid)
 npm run simulate   # simula partidas contra el motor del juego (Grid)
 npm run validate:top10  # valida las 59 listas de Top 10 y prueba la coincidencia de nombres
+npm run validate:gabinete  # prueba Arma el Gabinete: sorteo, reto diario, reglas y fotos del juego
 npm run fotos      # descarga retratos de los políticos a public/politicians/
 npm run logos      # descarga logos de partidos a public/parties/
 ```
@@ -88,7 +89,7 @@ public/
 
 ## Datos
 
-La base tiene **609 políticos**: las 154 fichas originales, hechas a mano; 353 fichas agregadas en bloque (ver [Fichas regionales](#fichas-regionales)), de las que 111 también generan tableros; y 102 fichas de ministros (ver [Fichas de ministros](#fichas-de-ministros)). Las 154 originales siguen el esquema multidimensional pedido (identificación, partidos, Congreso, poder territorial, carrera presidencial, ejecutivo/diplomacia/control, décadas e hitos), más `presidente` y `vicepresidente` en la carrera presidencial.
+La base tiene **626 políticos**: las 154 fichas originales, hechas a mano; 353 fichas agregadas en bloque (ver [Fichas regionales](#fichas-regionales)), de las que 111 también generan tableros; 102 fichas de ministros (ver [Fichas de ministros](#fichas-de-ministros)); y 17 de directores de departamentos administrativos (ver [Fichas de directores](#fichas-de-directores)). Las 154 originales siguen el esquema multidimensional pedido (identificación, partidos, Congreso, poder territorial, carrera presidencial, ejecutivo/diplomacia/control, décadas e hitos), más `presidente` y `vicepresidente` en la carrera presidencial.
 
 Cobertura de los criterios de nicho (políticos por criterio):
 
@@ -146,6 +147,15 @@ No incluye: encargados ni gobernadores o alcaldes de elecciones atípicas; alcal
 - **Homónimos**: «Mauricio Santamaría Salamanca» (ministro de Salud 2010–2012) se confundía con Mauricio Cárdenas Santamaría; la lista Top 10 ahora usa su nombre completo.
 - **Fuera del esquema**: las carteras de Cultura, Deporte, Ciencia e Igualdad no son criterios; sus titulares actuales solo cuentan para «Gabinete de De la Espriella».
 - **Fotos**: las fichas nuevas aún no tienen foto (Wikimedia limita la descarga); `npm run fotos` las toma cuando se pueda.
+
+### Fichas de directores
+
+`records/administrativos.ts` agrega las personas que dirigieron el DAPRE, el DNP, el DANE o Prosperidad Social, y un vicepresidente, que no estaban en la base. El cargo y el periodo vienen de la tabla de directores de cada departamento en Wikipedia; el partido, el lugar de nacimiento y el género, del artículo de cada persona. Quien no tenía un artículo verificable (o cuyo artículo era de otra persona homónima) no entra.
+
+- `ejecutivo.departamentos_administrativos` guarda el departamento (`DAPRE`, `DNP`, `DANE`, `Prosperidad Social`). Son datos descriptivos: el juego «Arma el Gabinete» no restringe los cargos.
+- `presidente` y `vicepresidente` en `ejecutivo` se rellenan desde `presidencial` en `build()`; no se escriben dos veces.
+- Quedan fuera los directores sin artículo verificable: Nhora Mondragón, Juan Manuel Alvarado, Mauricio Perfetti, Esteban Piedrahíta, Hernando José Gómez, Carolina Rentería, entre otros. Y Víctor Manuel Muñoz (DAPRE 2021–2022) y Santiago Montenegro (DNP): el artículo que aparece con su nombre no es el de esa persona. Por eso son 17 fichas y no 20.
+- Los ministros que dirigieron un departamento (por ejemplo, Susana Correa, Laura Sarabia, Mauricio Lizcano) ya estaban en la base y se etiquetan con sus cargos.
 
 ### Agregar un político
 
@@ -216,6 +226,24 @@ Todos los datos se contrastaron en noviembre de 2026 con Wikipedia (es/en: anexo
 - **Listas regionales** (`top10/regionales.ts`): votos y porcentajes de los ganadores según las tablas de Wikipedia de las elecciones regionales de 2011, 2015, 2019 y 2023, las mismas de las fichas regionales. Pueden diferir un poco del escrutinio oficial (Galán 2023: 1.499.734 aquí y 1.497.596 en El Tiempo). Tres filas de la fuente estaban incompletas: Pasto 2023 sin votos (no entra en el top: unos 74.000 según la prensa), Santa Marta 2023 sin porcentaje y Riohacha 2023 con una errata («35;67%»). Por eso no hay lista de alcaldes por porcentaje. Las listas de concejales de Barranquilla, Bogotá y Medellín 2023 solo incluyen a los elegidos y excluyen las listas cerradas (su cifra es de la lista, no de cada persona). En Medellín también se excluye a Juan Carlos Upegui: sus 95.863 votos coinciden con su votación como candidato a la alcaldía.
 
 Para agregar una lista, escribe una entrada con `lista({...})` en el archivo de `src/data/top10/` que corresponda (cada fila es `[nombre, aliases, partido, pista, extra]`) y corre `npm run validate:top10`: comprueba posiciones, que el nombre y cada alias lleven a su fila, que los votos bajen (o los años retrocedan) fila a fila y los avisos de aliases ambiguos.
+
+## Arma el Gabinete
+
+Tercer juego del hub (ruta `#/gabinete`). Hay que llenar las 11 sillas del gobierno (presidencia, vicepresidencia, cinco ministerios y cuatro departamentos administrativos) con políticos de los partidos que sortea una ruleta. Cualquier político del partido sorteado puede ir en cualquier silla: el cargo no restringe nada.
+
+| Opción | Valores |
+| --- | --- |
+| **Reto diario** | Misma secuencia de partidos para todos (Mulberry32 sembrado con la fecha AAAAMMDD). Cronómetro y sin límite de turno. Racha y récord de tiempo; solo cuenta el primer intento. |
+| **Temporizador** | **Sin tiempo** (cronómetro que cuenta para el récord), **15 s por turno** (si se acaba, es un error y sale otro partido) o **Contrarreloj 2 min** (todo el gabinete). |
+| **Dificultad** | **Normal**: sugerencias con foto desde 2 letras. **Difícil**: sugerencias solo desde 3 letras. |
+| **Comodines** | Dos «Re-sortear partido», que cambian el partido sin costar error. |
+| **Errores** | Nombrar a alguien que no militó en el partido sorteado, repetir a alguien ya nombrado y que se acabe el turno. Con 3 errores pierdes. |
+
+**Sorteo.** Cada giro elige un partido con probabilidad proporcional a sus políticos sin usar (`src/utils/cabinetRandomizer.ts`): búsqueda binaria sobre los pesos acumulados, y solo entran partidos con al menos un disponible. La partida libre usa `crypto.getRandomValues`; el reto diario, Mulberry32 con la fecha. La secuencia del día se genera con la misma regla, consumiendo un político por giro (`src/gabinete/daily.ts`), así no depende de lo que haga cada jugador.
+
+**Candidatos.** Solo entran las fichas con partido y con foto real (`foto_url`), para que cada silla muestre un retrato verdadero. Las demás fichas siguen en Política Grid y en Top 10. Si una foto falla al cargar, la silla muestra las iniciales.
+
+**Código.** `src/gabinete/` (motor puro en `engine.ts`, reto diario en `daily.ts`, estadísticas en `stats.ts`, reloj en `useGabinete.ts`), `src/components/Gabinete*.tsx` y `Ruleta.tsx`. Pruebas: `npm run validate:gabinete` (sorteo, reto diario, reglas, temporizadores, un robot que juega 200 partidas y que todas las fotos existan).
 
 ## Logos de partidos
 

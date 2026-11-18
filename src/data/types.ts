@@ -236,11 +236,23 @@ export interface Presidencial {
   vicepresidente: boolean
 }
 
+/** Departamentos administrativos del Gobierno nacional que cuentan para el juego «Arma el Gabinete». */
+export const DEPARTAMENTOS_ADMINISTRATIVOS = ['DAPRE', 'DNP', 'DANE', 'Prosperidad Social'] as const
+export type DepartamentoAdministrativo = (typeof DEPARTAMENTOS_ADMINISTRATIVOS)[number]
+
 export interface Ejecutivo {
   ministerios: Ministerio[]
   gobiernos_gabinete: Gobierno[]
   embajador: boolean
   organos_control: OrganoControl[]
+  /**
+   * Presidente y vicepresidente en algún periodo. Los llena `build()` desde `presidencial`,
+   * así cada dato se escribe una sola vez.
+   */
+  presidente?: boolean
+  vicepresidente?: boolean
+  /** Directores de departamentos administrativos (DAPRE, DNP, DANE, Prosperidad Social). */
+  departamentos_administrativos?: DepartamentoAdministrativo[]
 }
 
 export interface Politician {
