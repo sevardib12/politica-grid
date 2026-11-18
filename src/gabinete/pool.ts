@@ -2,24 +2,22 @@ import { POLITICIANS } from '../data/politicians.ts'
 import { PARTIDOS, type Partido, type Politician } from '../data/types.ts'
 
 /**
- * Candidatos del juego: políticos con partido y con foto real (`foto_url`), así cada puesto del
- * organigrama muestra un retrato verdadero. Las fichas sin foto siguen en el buscador de Política
- * Grid y en Top 10, pero no entran aquí.
+ * Candidatos del juego: toda la base de datos. Cada político entra por los partidos en los que
+ * militó (los de `partidos`); quien no tiene partido registrado no sale en ningún sorteo, pero se
+ * puede escribir su nombre (y sería un error: no militó en el partido sorteado). Sin foto, la silla
+ * muestra las iniciales.
  */
 export interface Pool {
-  /** Todos los candidatos, por id. */
+  /** Todos los políticos de la base, por id. */
   porId: Map<string, Politician>
-  /** Candidatos de cada partido (un político puede estar en varios). Ordenados por id. */
+  /** Políticos de cada partido (uno puede estar en varios). Ordenados por id. */
   porPartido: Map<Partido, Politician[]>
-  /** Partidos con al menos un candidato, en el orden del catálogo. */
+  /** Partidos con al menos un político, en el orden del catálogo. */
   partidos: Partido[]
 }
 
 export function buildPool(fuente: readonly Politician[] = POLITICIANS): Pool {
-  const candidatos = fuente
-    .filter((p) => p.foto_url && p.partidos.length > 0)
-    .slice()
-    .sort((a, b) => a.id.localeCompare(b.id))
+  const candidatos = fuente.slice().sort((a, b) => a.id.localeCompare(b.id))
   const porId = new Map<string, Politician>()
   const porPartido = new Map<Partido, Politician[]>()
   for (const p of candidatos) {

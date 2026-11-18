@@ -45,6 +45,7 @@ export function GabineteApp() {
         onAjustes={setAjustes}
         stats={stats}
         candidatos={pool.porId.size}
+        conPartido={new Set([...pool.porPartido.values()].flat().map((p) => p.id)).size}
         partidos={pool.partidos.length}
         onPlay={jugarLibre}
         onPlayDaily={jugarDiario}

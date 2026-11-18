@@ -17,6 +17,7 @@ export function GabineteHome({
   onAjustes,
   stats,
   candidatos,
+  conPartido,
   partidos,
   onPlay,
   onPlayDaily,
@@ -25,6 +26,7 @@ export function GabineteHome({
   onAjustes: (a: AjustesGabinete) => void
   stats: StatsGabinete
   candidatos: number
+  conPartido: number
   partidos: number
   onPlay: () => void
   onPlayDaily: () => void
@@ -117,7 +119,7 @@ export function GabineteHome({
             value={ajustes.dificultad}
             onChange={(dificultad) => onAjustes({ ...ajustes, dificultad })}
             options={[
-              { value: 'normal', label: DIFICULTAD_LABEL.normal, hint: 'con sugerencias y foto' },
+              { value: "normal", label: DIFICULTAD_LABEL.normal, hint: "con sugerencias" },
               { value: 'dificil', label: DIFICULTAD_LABEL.dificil, hint: 'sugerencias desde 3 letras' },
             ]}
           />
@@ -169,7 +171,8 @@ export function GabineteHome({
       </section>
 
       <p className="mt-6 text-center text-xs text-slate-500">
-        Juegan {candidatos} políticos de {partidos} partidos, todos con foto real. Las fichas sin foto no entran a la ruleta. Si ves un
+        Juega toda la base: {candidatos} políticos, de los que {conPartido} salen en la ruleta por sus {partidos} partidos. Quien no tiene
+        foto aparece con sus iniciales. Si ves un
         dato incorrecto, es un error de la base y no de tu respuesta.
       </p>
     </div>

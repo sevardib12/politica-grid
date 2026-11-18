@@ -22,11 +22,14 @@ const pool = buildPool(POLITICIANS)
 const ctxCon = (seed: number): Contexto => ({ pool, rng: mulberry32(seed) })
 const cfg = (over: Partial<ConfigGabinete> = {}): ConfigGabinete => ({ daily: false, dateKey: null, temporizador: 'cronometro', dificultad: 'normal', ...over })
 
-console.log(`Candidatos: ${pool.porId.size} con foto y partido · partidos con candidatos: ${pool.partidos.length}\n`)
+const conPartido = new Set([...pool.porPartido.values()].flat().map((p) => p.id)).size
+console.log(`Jugadores: ${pool.porId.size} políticos (${conPartido} con partido) · partidos con candidatos: ${pool.partidos.length}\n`)
 
-// ── 1. Fotos ──────────────────────────────────────────────────────────────
-const sinArchivo = [...pool.porId.values()].filter((p) => !existsSync(path.join(ROOT, 'public', p.foto_url ?? '')))
-comprobar('Todas las fotos del juego existen en public/', sinArchivo.length === 0, sinArchivo.map((p) => p.id).slice(0, 5).join(', '))
+// ── 1. Base y fotos ───────────────────────────────────────────────────────
+comprobar('Toda la base de datos juega', pool.porId.size === POLITICIANS.length, `${pool.porId.size}/${POLITICIANS.length}`)
+comprobar('Todo político con partido sale en el sorteo de cada uno de sus partidos', POLITICIANS.filter((p) => p.partidos.length > 0).every((p) => p.partidos.every((x) => pool.porPartido.get(x)?.some((q) => q.id === p.id))))
+const sinArchivo = [...pool.porId.values()].filter((p) => p.foto_url && !existsSync(path.join(ROOT, 'public', p.foto_url)))
+comprobar('Toda foto registrada existe en public/ (sin foto, la silla muestra iniciales)', sinArchivo.length === 0, sinArchivo.map((p) => p.id).slice(0, 5).join(', '))
 comprobar('Hay candidatos para al menos 8 partidos', pool.partidos.length >= 8, `${pool.partidos.length}`)
 comprobar('Cada silla tiene un cargo distinto', new Set(SILLAS.map((s) => s.id)).size === 11)
 

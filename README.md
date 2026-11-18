@@ -241,9 +241,9 @@ Tercer juego del hub (ruta `#/gabinete`). Hay que llenar las 11 sillas del gobie
 
 **Sorteo.** Cada giro elige un partido con probabilidad proporcional a sus políticos sin usar (`src/utils/cabinetRandomizer.ts`): búsqueda binaria sobre los pesos acumulados, y solo entran partidos con al menos un disponible. La partida libre usa `crypto.getRandomValues`; el reto diario, Mulberry32 con la fecha. La secuencia del día se genera con la misma regla, consumiendo un político por giro (`src/gabinete/daily.ts`), así no depende de lo que haga cada jugador.
 
-**Candidatos.** Solo entran las fichas con partido y con foto real (`foto_url`), para que cada silla muestre un retrato verdadero. Las demás fichas siguen en Política Grid y en Top 10. Si una foto falla al cargar, la silla muestra las iniciales.
+**Candidatos.** Juega toda la base de datos, con o sin foto: cada político sale en el sorteo de cada uno de sus partidos (`partidos`). Quien no tiene partido registrado no sale en la ruleta, pero se puede escribir su nombre y sería un error. Sin foto (o si falla al cargar), la silla muestra las iniciales.
 
-**Código.** `src/gabinete/` (motor puro en `engine.ts`, reto diario en `daily.ts`, estadísticas en `stats.ts`, reloj en `useGabinete.ts`), `src/components/Gabinete*.tsx` y `Ruleta.tsx`. Pruebas: `npm run validate:gabinete` (sorteo, reto diario, reglas, temporizadores, un robot que juega 200 partidas y que todas las fotos existan).
+**Código.** `src/gabinete/` (motor puro en `engine.ts`, reto diario en `daily.ts`, estadísticas en `stats.ts`, reloj en `useGabinete.ts`), `src/components/Gabinete*.tsx` y `Ruleta.tsx`. Pruebas: `npm run validate:gabinete` (sorteo, reto diario, reglas, temporizadores, un robot que juega 200 partidas y que toda foto registrada exista).
 
 ## Logos de partidos
 
