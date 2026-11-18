@@ -41,10 +41,13 @@ export const territorial = [
     nombre: 'Elsa Noguera de la Espriella',
     genero: 'Femenino',
     region: 'Caribe',
-    partidos: ['Partido de la U'],
+    // Cambio Radical es su partido actual según la tabla del gabinete de Wikipedia (Gabinete de Colombia).
+    partidos: ['Partido de la U', 'Cambio Radical'],
     // Gobernadora del Atlántico 2020–2023 (Wikipedia: Elecciones regionales de Colombia de 2019)
     territorial: { alcalde: ['Barranquilla'], gobernador: ['Atlántico'] },
-    ejecutivo: { ministerios: ['Vivienda'], gobiernos_gabinete: ['Duque'] },
+    // Vivienda con Santos (25 de abril de 2016–18 de agosto de 2017) y Transporte con Abelardo de la
+    // Espriella (desde el 7 de agosto de 2026); Wikipedia: Ministerio de Vivienda, Ciudad y Territorio.
+    ejecutivo: { ministerios: ['Vivienda', 'Transporte'], gobiernos_gabinete: ['Santos', 'De la Espriella'] },
     decadas: d('2010s-2020s'),
   }),
   build({

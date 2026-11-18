@@ -162,7 +162,7 @@ export const CARGOS_EJECUTIVO: Top10Challenge[] = [
       ['Juan Pablo Uribe', ['Uribe', 'Juan Pablo Uribe Restrepo'], null, '2018–2019', 'Ministro de Salud de Duque hasta el 26 de diciembre de 2019.'],
       ['Alejandro Gaviria', ['Gaviria', 'Alejandro Gaviria Uribe'], null, '2012–2018', 'Ministro de Salud de Santos durante casi seis años. Después fue ministro de Educación de Petro.'],
       ['Beatriz Londoño', ['Beatriz Londoño Soto', 'Beatriz Londono'], null, '2012', 'Ministra de Salud entre el 24 de enero y el 3 de septiembre de 2012.'],
-      ['Mauricio Santamaría', ['Santamaría', 'Mauricio Santamaria'], null, '2010–2012', 'Primer ministro de Salud de Santos (7 de agosto de 2010–24 de enero de 2012).'],
+      ['Mauricio Santamaría Salamanca', ['Santamaría', 'Mauricio Santamaría', 'Santamaría Salamanca', 'Santa María', 'Mauricio Santa María', 'Mauricio Santamaria'], null, '2010–2012', 'Primer ministro de Salud de Santos (7 de agosto de 2010–24 de enero de 2012).'],
       ['Diego Palacio', ['Palacio', 'Diego Palacio Betancourt'], null, '2003–2010', 'Ministro de la Protección Social de Uribe durante casi siete años.'],
       ['Juan Luis Londoño', ['Juan Luis Londoño de la Cuesta', 'Juan Luis Londono'], null, '2002–2003', 'Primer ministro de la Protección Social de Uribe (7 de agosto de 2002–6 de febrero de 2003).'],
     ],

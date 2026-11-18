@@ -311,6 +311,8 @@ export const congreso = [
       departamentos_camara: ['Bogotá'],
       presidente_camara: true,
     },
+    // Ministro del Interior de Abelardo de la Espriella entre el 7 de agosto y el 21 de octubre de 2026.
+    ejecutivo: { ministerios: ['Interior'], gobiernos_gabinete: ['De la Espriella'] },
     decadas: d('2000s-2020s'),
   }),
   build({
@@ -516,6 +518,8 @@ export const congreso = [
     region: 'Antioquia',
     partidos: ['Centro Democrático'],
     congreso: { senador: true },
+    // Ministra de Cultura de Abelardo de la Espriella (Cultura no es parte de los ministerios del esquema).
+    ejecutivo: { gobiernos_gabinete: ['De la Espriella'] },
     decadas: d('2010s-2020s'),
   }),
 ]

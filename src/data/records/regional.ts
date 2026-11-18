@@ -532,7 +532,7 @@ export const regional: Politician[] = [
   build({ id: 'salazar-pelaez-mauricio', nombre: "Mauricio Salazar Peláez", genero: 'Masculino', region: 'Sin dato', partidos: [], congreso: { representante_camara: true }, territorial: { alcalde: ['Pereira'], concejal: ['Pereira'] }, decadas: ['2010s', '2020s'] }),
   // alcalde Bucaramanga 2024–2027 · nacimiento: Bucaramanga
   // completado: Ministro de Vivienda, Ciudad y Territorio de Colombia (Wikipedia); Alcalde de Bucaramanga (Wikipedia); Concejal de Bucaramanga (Wikipedia)
-  build({ id: 'andres-beltran-jaime', nombre: "Jaime Andrés Beltrán", genero: 'Masculino', region: 'Santanderes', partidos: ['Colombia Justa Libres', 'Salvación Nacional'], territorial: { alcalde: ['Bucaramanga'], concejal: ['Bucaramanga'] }, ejecutivo: { ministerios: ['Vivienda'] }, decadas: ['2010s', '2020s'] }),
+  build({ id: 'andres-beltran-jaime', nombre: "Jaime Andrés Beltrán", genero: 'Masculino', region: 'Santanderes', partidos: ['Colombia Justa Libres', 'Salvación Nacional'], territorial: { alcalde: ['Bucaramanga'], concejal: ['Bucaramanga'] }, ejecutivo: { ministerios: ['Vivienda'], gobiernos_gabinete: ['De la Espriella'] }, decadas: ['2010s', '2020s'] }),
   // alcalde Sincelejo 2024–2027
   build({ id: 'acuna-cardales-yahir', nombre: "Yahir Fernando Acuña Cardales", genero: 'Masculino', region: 'Sin dato', partidos: [], territorial: { alcalde: ['Sincelejo'] }, decadas: ['2020s'], perfil_regional: true }),
   // alcalde Ibagué 2024–2027 · nacimiento: Ibagué, Tolima, Colombia

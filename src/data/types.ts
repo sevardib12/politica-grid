@@ -172,6 +172,7 @@ export const GOBIERNOS = [
   'Santos',
   'Duque',
   'Petro',
+  'De la Espriella',
 ] as const
 export type Gobierno = (typeof GOBIERNOS)[number]
 

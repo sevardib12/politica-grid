@@ -142,10 +142,12 @@ export const gabinete = [
     nombre: 'Alejandro Ordóñez Maldonado',
     genero: 'Masculino',
     region: 'Santanderes',
-    partidos: [],
+    // Partido Conservador según la tabla del gabinete actual de Wikipedia (Gabinete de Colombia).
+    partidos: ['Partido Conservador'],
     presidencial: { consulta_interpartidista: true },
-    ejecutivo: { organos_control: ['Procurador'] },
-    decadas: d('2000s-2010s'),
+    // Ministro del Interior de Abelardo de la Espriella (se posesionó el 4 de noviembre de 2026).
+    ejecutivo: { ministerios: ['Interior'], gobiernos_gabinete: ['De la Espriella'], organos_control: ['Procurador'] },
+    decadas: d('2000s-2020s'),
   }),
   build({
     id: 'maya-edgardo',

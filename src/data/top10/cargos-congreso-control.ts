@@ -36,7 +36,7 @@ export const CARGOS_CONGRESO_CONTROL: Top10Challenge[] = [
     nota: 'El periodo de la Cámara va del 20 de julio al 20 de julio.',
     items: [
       ['Nicolás Barguil', ['Barguil', 'Nicolas Barguil'], 'Partido Conservador', '2026–2027', 'Presidente de la Cámara desde el 20 de julio de 2026.'],
-      ['Julián López', ['López', 'Julián López Sánchez', 'Julian Lopez'], 'Partido de la U', '2025–2026', 'Presidió la Cámara entre el 20 de julio de 2025 y el 20 de julio de 2026.'],
+      ['Julián David López', ['López', 'Julián López', 'Julián López Sánchez', 'Julian Lopez'], 'Partido de la U', '2025–2026', 'Presidió la Cámara entre el 20 de julio de 2025 y el 20 de julio de 2026.'],
       ['Jaime Salamanca', ['Salamanca', 'Jaime Raúl Salamanca'], 'Alianza Verde', '2024–2025', 'Presidió la Cámara entre el 20 de julio de 2024 y el 20 de julio de 2025.'],
       ['Andrés Calle', ['Calle', 'Andrés David Calle', 'Andres Calle'], 'Partido Liberal', '2023–2024', 'Presidió la Cámara entre el 20 de julio de 2023 y el 20 de julio de 2024.'],
       ['David Racero', ['Racero', 'David Ricardo Racero'], 'Colombia Humana', '2022–2023', 'Presidió la Cámara en el primer año del gobierno de Gustavo Petro.'],

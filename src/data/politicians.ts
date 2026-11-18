@@ -5,6 +5,7 @@ import { territorial } from './records/territorial.ts'
 import { gabinete } from './records/gabinete.ts'
 import { mesas } from './records/mesas.ts'
 import { regional } from './records/regional.ts'
+import { ministros } from './records/ministros.ts'
 import { FOTOS } from './photos.ts'
 
 export type { Politician } from './types.ts'
@@ -24,6 +25,7 @@ const SIN_FOTO: readonly Politician[] = [
   ...mesas,
   ...territorial,
   ...gabinete,
+  ...ministros,
   ...regional,
 ]
 

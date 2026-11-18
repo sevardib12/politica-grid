@@ -47,8 +47,8 @@ src/
   data/
     types.ts            interfaz Politician y vocabularios cerrados (partidos, ministerios…)
     builder.ts          build() y d(): fichas compactas → Politician completo y estricto
-    records/*.ts        los políticos, por grupo (presidencia, congreso, mesas, territorial, gabinete, regional)
-    politicians.ts      POLITICIANS (507 políticos), POLITICOS_TABLERO (265) y comprobación de ids únicos
+    records/*.ts        los políticos, por grupo (presidencia, congreso, mesas, territorial, gabinete, ministros, regional)
+    politicians.ts      POLITICIANS (609 políticos), POLITICOS_TABLERO (367) y comprobación de ids únicos
     parties.ts          catálogo de partidos: id, nombre oficial, sigla, colores y logo
     partyLogos.ts       GENERADO por `npm run logos` (no editar a mano)
     partyColors.ts      color del partido principal para los bordes de los avatares
@@ -88,7 +88,7 @@ public/
 
 ## Datos
 
-La base tiene **507 políticos**: las 154 fichas originales, hechas a mano, y 353 fichas agregadas en bloque (ver [Fichas regionales](#fichas-regionales)), de las que 111 también generan tableros. Las 154 originales siguen el esquema multidimensional pedido (identificación, partidos, Congreso, poder territorial, carrera presidencial, ejecutivo/diplomacia/control, décadas e hitos), más `presidente` y `vicepresidente` en la carrera presidencial.
+La base tiene **609 políticos**: las 154 fichas originales, hechas a mano; 353 fichas agregadas en bloque (ver [Fichas regionales](#fichas-regionales)), de las que 111 también generan tableros; y 102 fichas de ministros (ver [Fichas de ministros](#fichas-de-ministros)). Las 154 originales siguen el esquema multidimensional pedido (identificación, partidos, Congreso, poder territorial, carrera presidencial, ejecutivo/diplomacia/control, décadas e hitos), más `presidente` y `vicepresidente` en la carrera presidencial.
 
 Cobertura de los criterios de nicho (políticos por criterio):
 
@@ -133,6 +133,19 @@ Criterios de rigor:
 - Erratas de Wikipedia corregidas con otra fuente: «Freddy de Jesús Varón Orozco» (Barranquilla 2020–2023) es Barón Orozco, como en la lista de 2024 con votos de la Registraduría.
 
 No incluye: encargados ni gobernadores o alcaldes de elecciones atípicas; alcaldes de municipios que no son capital; concejales de Medellín y Cali 2020–2023 (Wikipedia solo da el más votado de cada partido).
+
+### Fichas de ministros
+
+`records/ministros.ts` agrega **102 personas**: los ministros de las listas Top 10 (Hacienda, Interior, Defensa, Relaciones Exteriores, Educación, Salud, Comercio, Transporte, Ambiente, Trabajo, Minas, Justicia, Agricultura, Vivienda y TIC) que no estaban en la base, más las ministras del Deporte y de Ciencia del gabinete actual. Con ellas, cada cartera pasó de 1–10 a 9–18 ministros en la base, y los criterios «Ministro/a de…» dejan de depender de unos pocos nombres. Se añadió el gobierno **De la Espriella** (7 de agosto de 2026): su gabinete tiene 20 personas.
+
+- **Cartera, periodo y gobierno**: salen de la lista Top 10 de esa cartera (a su vez de la tabla de Wikipedia del ministerio); el gobierno de una cartera nunca se deduce del año.
+- **Artículo de Wikipedia**: se busca por nombre y solo se acepta si menciona la cartera y Colombia. De su ficha (infobox) salen los cargos adicionales (Congreso, gobernaciones, alcaldías, concejos, otras carteras, embajadas, órganos de control), el partido y el lugar de nacimiento. Congreso Visible se usa solo para quien pasó por el Congreso y con verificación (cuatro fichas).
+- **No cuentan**: encargados e interinos (p. ej. un «Gobernador ad hoc» o una alcaldesa encargada), viceministros, directores, rectores y altos consejeros. El gobernador de Cundinamarca designado por el presidente en 2015 (Guillermo Rivera) se omitió.
+- **Género y origen**: del artículo; donde no hay lugar de nacimiento queda `'Sin dato'`.
+- **Fichas existentes corregidas**: Elsa Noguera fue ministra de Vivienda con Santos (no con Duque) y hoy de Transporte; Ordóñez, Lara Restrepo, Beltrán y Paola Holguín entran al gabinete De la Espriella; Ordóñez y Noguera suman el partido que registra la tabla del gabinete.
+- **Homónimos**: «Mauricio Santamaría Salamanca» (ministro de Salud 2010–2012) se confundía con Mauricio Cárdenas Santamaría; la lista Top 10 ahora usa su nombre completo.
+- **Fuera del esquema**: las carteras de Cultura, Deporte, Ciencia e Igualdad no son criterios; sus titulares actuales solo cuentan para «Gabinete de De la Espriella».
+- **Fotos**: las fichas nuevas aún no tienen foto (Wikimedia limita la descarga); `npm run fotos` las toma cuando se pueda.
 
 ### Agregar un político
 
