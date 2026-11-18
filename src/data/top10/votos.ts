@@ -21,7 +21,7 @@ export const VOTOS_CONGRESO: Top10Challenge[] = [
     items: [
       ['Miguel Uribe Turbay', ['Miguel Uribe', 'Uribe Turbay'], 'Centro Democrático', '223.167 votos', 'El senador más votado de 2022, por el Centro Democrático.'],
       ['María Fernanda Cabal', ['Cabal', 'Maria Fernanda Cabal'], 'Centro Democrático', '196.865 votos', 'Segunda más votada, también por el Centro Democrático.'],
-      ['Jonathan Pulido', ['Pulido', 'Jonathan Ferney Pulido', 'Jonatan Pulido'], 'Alianza Verde', '189.291 votos', 'Encabezó la lista de la coalición Centro Esperanza (Alianza Verde).'],
+      ['Jonathan Pulido', ['Pulido', 'Jonathan Ferney Pulido', 'Jonatan Pulido', 'Jota Pe Hernández', 'Jota Pe Hernandez'], 'Alianza Verde', '189.291 votos', 'Encabezó la lista de la coalición Centro Esperanza (Alianza Verde).'],
       ['Humberto de la Calle', ['De la Calle', 'Humberto de la Calle Lombana'], null, '187.307 votos', 'Por Centro Esperanza. Fue vicepresidente (1994–1996) y candidato presidencial liberal en 2018.'],
       ['Nadia Blel', ['Blel', 'Nadya Blel', 'Nadia Georgette Blel'], 'Partido Conservador', '165.754 votos', 'La senadora más votada del Partido Conservador en 2022.'],
     ],
