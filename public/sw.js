@@ -1,4 +1,4 @@
-// Service worker de Política Grid: la red manda y, si no hay conexión, se usa lo guardado.
+// Service worker de Urna: la red manda y, si no hay conexión, se usa lo guardado.
 // Así cada visita trae la versión nueva, y el juego sigue abriendo sin internet.
 const CACHE = 'politica-grid-v1'
 

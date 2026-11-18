@@ -12,27 +12,21 @@ const GAMES: { id: GameId; label: string; short: string; Icon: LucideIcon }[] = 
 export function Navbar({ game, onChange }: { game: GameId; onChange: (g: GameId) => void }) {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-ink/85 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-2.5">
+      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-2 px-4 py-2.5">
         <a
           href="#/grid"
           onClick={(e) => {
             e.preventDefault()
             onChange('grid')
           }}
-          className="flex items-center gap-2 rounded-lg text-sm font-black tracking-tight text-slate-50"
-          aria-label="Política: inicio"
+          className="flex shrink-0 items-center gap-2 rounded-lg text-base font-black tracking-tight text-slate-50"
+          aria-label="Urna: inicio"
         >
-          <span className="inline-grid grid-cols-3 gap-0.5" aria-hidden="true">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <span key={i} className={`size-1.5 rounded-[2px] ${i === 4 ? 'bg-gold' : 'bg-cyan/70'}`} />
-            ))}
-          </span>
-          <span className="hidden sm:inline">
-            Política <span className="text-gold">Juegos</span>
-          </span>
+          <img src={`${import.meta.env.BASE_URL}urna-logo.png`} alt="" className="size-8 rounded-lg bg-white p-0.5" />
+          <span>Urna</span>
         </a>
 
-        <nav aria-label="Juegos" className="flex gap-1 rounded-2xl border border-line bg-panel p-1">
+        <nav aria-label="Juegos" className="flex shrink-0 gap-1 rounded-2xl border border-line bg-panel p-1">
           {GAMES.map(({ id, label, short, Icon }) => {
             const active = id === game
             return (
@@ -41,11 +35,11 @@ export function Navbar({ game, onChange }: { game: GameId; onChange: (g: GameId)
                 type="button"
                 onClick={() => onChange(id)}
                 aria-current={active ? 'page' : undefined}
-                className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-bold transition ${
+                className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-1.5 text-sm font-bold transition sm:px-3 ${
                   active ? 'bg-gold text-ink shadow' : 'text-slate-300 hover:bg-white/5 hover:text-white'
                 }`}
               >
-                <Icon size={16} aria-hidden="true" />
+                <Icon size={16} aria-hidden="true" className="hidden sm:block" />
                 <span className="sm:hidden">{short}</span>
                 <span className="hidden sm:inline">{label}</span>
               </button>

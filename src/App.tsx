@@ -26,7 +26,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    document.title = TITLE[game]
+    document.title = `${TITLE[game]} · Urna`
     window.scrollTo({ top: 0 })
   }, [game])
 

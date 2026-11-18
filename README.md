@@ -1,9 +1,10 @@
-# Política Grid y Política Top 10
+# Urna
 
-Dos juegos de trivia sobre la política colombiana en una sola aplicación, con una barra superior para alternar entre ellos (la ruta vive en el hash: `#/grid` y `#/top10`):
+Urna reúne tres juegos de trivia sobre la política colombiana en una sola aplicación, con una barra superior para alternar entre ellos (la ruta vive en el hash: `#/grid`, `#/top10` y `#/gabinete`). El logo está en `public/urna-logo.png`; los íconos de la app (`public/icons/`) y el favicon (`public/favicon.png`) se generaron de ese mismo archivo, sobre fondo blanco.
 
 - **Política Grid**: cuadrícula 3×3 de los años 80 a 2026, inspirada en *Futbol 11 Grid* e *Immaculate Grid*.
 - **Política Top 10**: listas de 10 o 5 filas (los últimos presidentes, los más votados, los ministros…), inspirada en *Futbol 11 Top 10* / *Football Tenable*. Ver [Política Top 10](#política-top-10).
+- **Arma el Gabinete**: llenar las 11 sillas del gobierno con políticos de los partidos que sortea una ruleta. Ver [Arma el Gabinete](#arma-el-gabinete).
 
 Todo corre en el cliente: sin backend, con estadísticas y racha diaria en `localStorage`.
 

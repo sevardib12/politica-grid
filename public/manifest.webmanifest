@@ -1,7 +1,7 @@
 {
-  "name": "Política Grid y Top 10",
-  "short_name": "Política",
-  "description": "Trivia de la política colombiana: cuadrícula 3×3 y listas Top 10.",
+  "name": "Urna",
+  "short_name": "Urna",
+  "description": "Urna: juegos de la política colombiana. Cuadrícula 3×3, listas Top 10 y Arma el Gabinete.",
   "lang": "es",
   "start_url": "./",
   "scope": "./",
