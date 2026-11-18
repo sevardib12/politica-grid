@@ -19,8 +19,8 @@ const fail = (msg: string) => {
 }
 
 // ── Base de datos ─────────────────────────────────────────────────────────
-const regionales = POLITICIANS.length - POLITICOS_TABLERO.length
-console.log(`Políticos: ${POLITICIANS.length} (${POLITICOS_TABLERO.length} de tablero + ${regionales} regionales) · Criterios con respuestas: ${CRITERIA.length}`)
+const enBloque = POLITICIANS.length - POLITICOS_TABLERO.length
+console.log(`Políticos: ${POLITICIANS.length} (${POLITICOS_TABLERO.length} de tablero + ${enBloque} en bloque: regionales y congresistas) · Criterios con respuestas: ${CRITERIA.length}`)
 if (POLITICIANS.length < 100) fail('La base de datos debe tener al menos 100 políticos')
 
 for (const p of POLITICIANS) {

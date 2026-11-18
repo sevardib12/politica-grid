@@ -13,7 +13,9 @@
     "fotos": "node scripts/fetch-official-photos.mjs",
     "logos": "node scripts/fetch-party-logos.mjs",
     "validate:top10": "node scripts/validate-top10.ts",
-    "validate:gabinete": "node scripts/validate-gabinete.ts"
+    "validate:gabinete": "node scripts/validate-gabinete.ts",
+    "congreso": "node scripts/congreso-visible.mjs",
+    "congreso:generar": "node scripts/congreso-visible-generar.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.5",

@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { POLITICIANS_BY_ID } from '../data/politicians.ts'
 import { criterionOrThrow } from '../utils/criteria.ts'
 import { reportarUrl } from '../utils/enlaces.ts'
@@ -8,6 +8,8 @@ import { ReportLink, WikiLink } from './Enlaces.tsx'
 import { PartyChips, PartyLogo } from './PartyLogo.tsx'
 import { PoliticianAvatar } from './PoliticianAvatar.tsx'
 import { Chip, Modal } from './ui.tsx'
+
+const TANDA = 40
 
 /** Solucionario de una casilla: todos los políticos que cumplían el cruce. */
 export function SolutionModal({
@@ -25,13 +27,21 @@ export function SolutionModal({
   const col = criterionOrThrow(board.cols[cell % 3])
   const valid = useMemo(
     () =>
-      // Primero los políticos de tablero; luego las fichas regionales.
+      // Primero los políticos de tablero; luego las fichas agregadas en bloque (regionales y congresistas).
       validForCell(board, Math.floor(cell / 3), cell % 3).sort(
         (a, b) => Number(!!a.perfil_regional) - Number(!!b.perfil_regional) || a.nombre.localeCompare(b.nombre, 'es'),
       ),
     [board, cell],
   )
   const placed = placedId ? POLITICIANS_BY_ID.get(placedId) : null
+  // Con el Congreso completo un cruce puede tener cientos de respuestas: se muestran por tandas.
+  const [limite, setLimite] = useState(TANDA)
+  const visibles = useMemo(() => {
+    const resto = valid.filter((p) => p.id !== placedId).slice(0, limite)
+    const propia = valid.find((p) => p.id === placedId)
+    return propia ? [propia, ...resto] : resto
+  }, [valid, placedId, limite])
+  const ocultos = valid.length - visibles.length
 
   return (
     <Modal
@@ -63,7 +73,7 @@ export function SolutionModal({
       )}
 
       <ul className="space-y-2">
-        {valid.map((p) => (
+        {visibles.map((p) => (
           <li
             key={p.id}
             className={`rounded-2xl border p-3 ${p.id === placedId ? 'border-ok/50 bg-ok/5' : 'border-line bg-ink/40'}`}
@@ -111,6 +121,16 @@ export function SolutionModal({
           </li>
         ))}
       </ul>
+
+      {ocultos > 0 && (
+        <button
+          type="button"
+          onClick={() => setLimite((l) => l + TANDA)}
+          className="mt-3 w-full rounded-2xl border border-line bg-ink/40 px-4 py-2.5 text-sm font-bold text-slate-100 transition hover:bg-ink/70"
+        >
+          Mostrar {Math.min(TANDA, ocultos)} más ({ocultos} sin mostrar)
+        </button>
+      )}
 
       <div className="mt-4 border-t border-line pt-3">
         <ReportLink

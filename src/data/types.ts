@@ -57,6 +57,8 @@ export const PARTIDOS = [
   'Alianza Social Independiente',
   'Colombianas y Colombianos por la Paz',
   'Fuerza Ciudadana',
+  // Convergencia Ciudadana (1997) → PIN (2009) → Opción Ciudadana (2013): un solo partido a lo largo del tiempo.
+  'Opción Ciudadana',
 ] as const
 export type Partido = (typeof PARTIDOS)[number]
 
@@ -274,9 +276,9 @@ export interface Politician {
   decadas_activo: Decada[]
   hitos: Hito[]
   /**
-   * Ficha de alcance regional (gobernadores, alcaldes de capitales y concejales
-   * agregados en bloque): cuenta como respuesta válida, aparece en el buscador y
-   * en el solucionario, pero no se usa para generar ni calibrar tableros.
+   * Ficha agregada en bloque (gobernadores, alcaldes de capitales, concejales y los
+   * congresistas de Congreso Visible): cuenta como respuesta válida, aparece en el
+   * buscador y en el solucionario, pero no se usa para generar ni calibrar tableros.
    */
   perfil_regional?: boolean
   /** Ruta local del retrato, p. ej. `/politicians/santos-calderon.jpg`. */

@@ -451,7 +451,7 @@ export const congreso = [
     id: 'bolivar-gustavo',
     nombre: 'Gustavo Bolívar Moreno',
     genero: 'Masculino',
-    region: 'Bogotá',
+    region: 'Boyacá/Cundinamarca', // nació en Girardot, Cundinamarca (La Silla Vacía, Wikipedia)
     partidos: ['Pacto Histórico', 'Colombia Humana'],
     congreso: { senador: true, presidente_comision: ['Comisión III (Hacienda)'] },
     ejecutivo: { gobiernos_gabinete: ['Petro'] },

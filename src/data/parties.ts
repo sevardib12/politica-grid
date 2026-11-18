@@ -247,6 +247,13 @@ const BASE: Record<Partido, PartyBase> = {
     color_primario: '#F58220',
     color_secundario: '#FFFFFF',
   },
+  'Opción Ciudadana': {
+    id: 'opcion-ciudadana',
+    nombre: 'Partido Opción Ciudadana (antes PIN y Convergencia Ciudadana)',
+    sigla: 'OC',
+    color_primario: '#E8590C',
+    color_secundario: '#1E3A8A',
+  },
 }
 
 /** Todos los partidos, en el orden de `PARTIDOS`, con su logo si se descargó. */

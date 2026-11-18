@@ -7,6 +7,7 @@ import { mesas } from './records/mesas.ts'
 import { regional } from './records/regional.ts'
 import { ministros } from './records/ministros.ts'
 import { administrativos } from './records/administrativos.ts'
+import { congresistas, conComplementos } from './records/congresistas.ts'
 import { FOTOS } from './photos.ts'
 
 export type { Politician } from './types.ts'
@@ -29,7 +30,8 @@ const SIN_FOTO: readonly Politician[] = [
   ...ministros,
   ...administrativos,
   ...regional,
-]
+  ...congresistas,
+].map(conComplementos)
 
 // Los retratos (`foto_url`, `foto_fuente`, `foto_origen`) los genera
 // `scripts/fetch-official-photos.mjs` en `photos.ts`; aquí se fusionan con
@@ -50,6 +52,7 @@ export const POLITICIANS_BY_ID: ReadonlyMap<string, Politician> = new Map(
 
 /**
  * Políticos con los que se generan y calibran los tableros: todos menos las
- * fichas de perfil regional. Las regionales siguen valiendo como respuesta.
+ * fichas agregadas en bloque (`perfil_regional`: regionales y congresistas de
+ * Congreso Visible). Esas siguen valiendo como respuesta.
  */
 export const POLITICOS_TABLERO: readonly Politician[] = POLITICIANS.filter((p) => !p.perfil_regional)

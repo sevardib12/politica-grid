@@ -78,6 +78,7 @@ const HINTS = {
   'alianza-social-independiente': { file: 'ASI Logo.svg', es: ['Alianza Social Independiente'], en: ['Independent Social Alliance'] },
   'colombianas-y-colombianos-por-la-paz': { skip: 'no hay logo propio en Commons (la búsqueda devolvía el del Partido Comunista)' },
   'fuerza-ciudadana': { es: ['Fuerza Ciudadana (Colombia)', 'Fuerza Ciudadana'], en: [] },
+  'opcion-ciudadana': { es: ['Partido Opción Ciudadana', 'Opción Ciudadana'], en: ['Citizen Option'] },
 }
 
 // ── Utilidades ────────────────────────────────────────────────────────────

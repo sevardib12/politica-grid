@@ -21,6 +21,8 @@ npm run validate:top10  # valida las 59 listas de Top 10 y prueba la coincidenci
 npm run validate:gabinete  # prueba Arma el Gabinete: sorteo, reto diario, reglas y fotos del juego
 npm run fotos      # descarga retratos de los políticos a public/politicians/
 npm run logos      # descarga logos de partidos a public/parties/
+npm run congreso   # baja de Congreso Visible los listados y perfiles de congresistas (scripts/.cache/cv/)
+npm run congreso:generar  # cruza esos perfiles con la base y reescribe records/congresistas.ts
 ```
 
 ## Política Grid: cómo se juega
@@ -48,8 +50,8 @@ src/
   data/
     types.ts            interfaz Politician y vocabularios cerrados (partidos, ministerios…)
     builder.ts          build() y d(): fichas compactas → Politician completo y estricto
-    records/*.ts        los políticos, por grupo (presidencia, congreso, mesas, territorial, gabinete, ministros, regional)
-    politicians.ts      POLITICIANS (609 políticos), POLITICOS_TABLERO (367) y comprobación de ids únicos
+    records/*.ts        los políticos, por grupo (presidencia, congreso, mesas, territorial, gabinete, ministros, administrativos, regional, congresistas)
+    politicians.ts      POLITICIANS (2.348 políticos), POLITICOS_TABLERO (384) y comprobación de ids únicos
     parties.ts          catálogo de partidos: id, nombre oficial, sigla, colores y logo
     partyLogos.ts       GENERADO por `npm run logos` (no editar a mano)
     partyColors.ts      color del partido principal para los bordes de los avatares
@@ -89,7 +91,7 @@ public/
 
 ## Datos
 
-La base tiene **626 políticos**: las 154 fichas originales, hechas a mano; 353 fichas agregadas en bloque (ver [Fichas regionales](#fichas-regionales)), de las que 111 también generan tableros; 102 fichas de ministros (ver [Fichas de ministros](#fichas-de-ministros)); y 17 de directores de departamentos administrativos (ver [Fichas de directores](#fichas-de-directores)). Las 154 originales siguen el esquema multidimensional pedido (identificación, partidos, Congreso, poder territorial, carrera presidencial, ejecutivo/diplomacia/control, décadas e hitos), más `presidente` y `vicepresidente` en la carrera presidencial.
+La base tiene **2.348 políticos**: las 154 fichas originales, hechas a mano; 353 fichas agregadas en bloque (ver [Fichas regionales](#fichas-regionales)), de las que 111 también generan tableros; 102 fichas de ministros (ver [Fichas de ministros](#fichas-de-ministros)); 17 de directores de departamentos administrativos (ver [Fichas de directores](#fichas-de-directores)); y 1.722 congresistas de 1998 a 2030 (ver [Fichas de congresistas](#fichas-de-congresistas)). De todas, 384 generan tableros y 1.964 valen solo como respuesta (`perfil_regional`). Las 154 originales siguen el esquema multidimensional pedido (identificación, partidos, Congreso, poder territorial, carrera presidencial, ejecutivo/diplomacia/control, décadas e hitos), más `presidente` y `vicepresidente` en la carrera presidencial.
 
 Cobertura de los criterios de nicho (políticos por criterio):
 
@@ -156,6 +158,18 @@ No incluye: encargados ni gobernadores o alcaldes de elecciones atípicas; alcal
 - `presidente` y `vicepresidente` en `ejecutivo` se rellenan desde `presidencial` en `build()`; no se escriben dos veces.
 - Quedan fuera los directores sin artículo verificable: Nhora Mondragón, Juan Manuel Alvarado, Mauricio Perfetti, Esteban Piedrahíta, Hernando José Gómez, Carolina Rentería, entre otros. Y Víctor Manuel Muñoz (DAPRE 2021–2022) y Santiago Montenegro (DNP): el artículo que aparece con su nombre no es el de esa persona. Por eso son 17 fichas y no 20.
 - Los ministros que dirigieron un departamento (por ejemplo, Susana Correa, Laura Sarabia, Mauricio Lizcano) ya estaban en la base y se etiquetan con sus cargos.
+
+### Fichas de congresistas
+
+`records/congresistas.ts` agrega **1.722 congresistas** que faltaban: 633 senadores y 1.216 representantes a la Cámara (127 estuvieron en ambas corporaciones), de los cuatrienios 1998–2002 a 2026–2030, tomados de [Congreso Visible](https://congresovisible.uniandes.edu.co) (Uniandes). Se detectó al notar que Rafael Nieto Loaiza (senador 2026–2030 por el Centro Democrático) no se podía responder: la base tenía solo 169 de las 1.889 personas que pasaron por el Senado o la Cámara según Congreso Visible entre 1998 y 2026. Ahora hay 761 senadores y 1.328 representantes en total (antes, 128 y 112); los senadores del Centro Democrático pasan de unos 15 a 57.
+
+- **Cómo se hizo**: `npm run congreso` baja los listados de Cámara y Senado de cada cuatrienio y el perfil de cada persona (1.889 perfiles, con 3 conexiones y pausas entre peticiones; reanuda si se corta). `npm run congreso:generar` cruza cada perfil con las fichas escritas a mano por nombre (palabras en común, sin tildes) y reescribe `records/congresistas.ts`; se puede repetir cuando cambie el Congreso (con `-- --listados` se vuelven a bajar los listados). Si hay un homónimo (otro género o, con solo dos palabras en común, otra región) se crea una ficha aparte.
+- **Qué lleva cada ficha**: nombre, género y lugar de nacimiento (si el perfil lo trae; si no, `'Sin dato'`: 440 fichas), el partido que las avaló en cada periodo, Senado o Cámara con la circunscripción territorial (`departamentos_camara`; las curules especiales e internacionales no suman departamento), las décadas de sus periodos y, cuando el texto de su trayectoria pública encaja con el vocabulario, alcaldías, gobernaciones, concejos, asambleas, ministerios y embajadas (116 fichas). Los nombres sin tilde (`Angel`, `Fernandez`) la recuperan si otra ficha la trae; se quitó la tilde de más de «Luís».
+- **Partidos**: solo los que coinciden exactamente con uno del catálogo. Las coaliciones («Coalición…», «Partido Liberal… Coalición») y los movimientos fuera del catálogo quedan sin partido (346 fichas): ante la duda, se omite. Se agregó **Opción Ciudadana** al catálogo (Convergencia Ciudadana desde 1997, PIN desde 2009 y Opción Ciudadana desde 2013 son el mismo partido); no tiene logo todavía y se dibuja como escudo con sigla. Siguen fuera, entre otros, el Movimiento Nacional Conservador, Apertura Liberal, Alas Equipo Colombia, MIR y Fuerza Progresista.
+- **Fichas existentes**: 65 recibieron datos que les faltaban (representante o senador, circunscripción, partido, décadas o región), siempre agregando, nunca quitando (`conComplementos` en el mismo archivo). Un caso se corrigió a mano: Gustavo Bolívar nació en Girardot (Cundinamarca), no en Bogotá. Congreso Visible se equivoca a veces en el lugar de nacimiento (por ejemplo, ubica a Humberto de la Calle en Valle y a Rodrigo Lara Restrepo en Bucaramanga, cuando nacieron en Manzanares y en Neiva), así que para fichas que ya existían solo se usa para rellenar `'Sin dato'`.
+- **Cuáles generan tableros**: ninguna. Todas llevan `perfil_regional: true`: valen como respuesta, salen en el buscador y al final del solucionario, y no cambian la generación ni la calibración de los tableros (`npm run validate` sigue dando 60/60 por dificultad). Con ellas, una casilla como «Senador/a × Partido Conservador» acepta cientos de respuestas, así que el solucionario las muestra de 40 en 40.
+- **Juego Arma el Gabinete**: las fichas con partido entran al sorteo de su partido. Como el sorteo pesa por número de políticos, el Partido Liberal (628) y el Conservador (329) salen mucho más que el resto; el reto diario cambia respecto a la versión anterior.
+- **Límites**: Congreso Visible no tiene datos anteriores a 1998; los congresistas de antes solo están si ya tenían ficha (18 fichas originales de congresistas no tienen perfil en Congreso Visible por eso o por llevar otro nombre). Las cifras de 2026–2030 (103 senadores y 186 representantes) son las que Congreso Visible tenía el 18 de noviembre de 2026; si hay reemplazos posteriores, hay que repetir la descarga. La base dice «Cámara» de 18 personas (por ejemplo Iván Cepeda, Ingrid Betancourt, Roy Barreras o Piedad Córdoba) cuyo perfil solo tiene Senado: puede ser de antes de 1998 o un dato por revisar. No hay fotos para las fichas nuevas (`npm run fotos` solo busca por Wikipedia a quienes tienen un artículo indicado a mano).
 
 ### Agregar un político
 
@@ -247,11 +261,11 @@ Tercer juego del hub (ruta `#/gabinete`). Hay que llenar las 11 sillas del gobie
 
 ## Logos de partidos
 
-`src/data/parties.ts` es el catálogo de los 30 partidos del vocabulario: `id` (slug), nombre oficial, `sigla`, `color_primario` y `color_secundario` (tomados mirando cada logo; no hay manuales de marca oficiales) y `logo_url`. `npm run logos` (`scripts/fetch-party-logos.mjs`) busca la página del partido en Wikipedia, lee el parámetro `logo` de su ficha, baja la miniatura de 250 px desde Wikimedia (los SVG llegan como PNG) y comprueba que sea una imagen real de más de 1 KB. Guarda autor y licencia (`logo_licencia`) y rechaza un mismo archivo para dos partidos.
+`src/data/parties.ts` es el catálogo de los 31 partidos del vocabulario: `id` (slug), nombre oficial, `sigla`, `color_primario` y `color_secundario` (tomados mirando cada logo; no hay manuales de marca oficiales) y `logo_url`. `npm run logos` (`scripts/fetch-party-logos.mjs`) busca la página del partido en Wikipedia, lee el parámetro `logo` de su ficha, baja la miniatura de 250 px desde Wikimedia (los SVG llegan como PNG) y comprueba que sea una imagen real de más de 1 KB. Guarda autor y licencia (`logo_licencia`) y rechaza un mismo archivo para dos partidos.
 
 `<PartyLogo />` muestra el logo sobre un recuadro claro (`bg-white/95`, `object-contain`); si no hay imagen, o falla, dibuja un **escudo con la sigla** en los colores del partido. Se usa en los encabezados del tablero, en la esquina de los avatares, en el solucionario y en cada fila de Top 10.
 
-**27 de 30 con logo.** Los de *Centro Democrático* (el emblema del hombre con la mano al corazón) y *Alianza Verde* (el logo «Partido Verde» con el girasol) los aportó el usuario; `HINTS.manual` en el script impide que `npm run logos` los sobrescriba. Quedan como escudo con sigla *Sí Colombia*, *Colombia Democrática* y *Colombianas y Colombianos por la Paz*: Wikipedia solo enlaza para ellos el logo de «Somos» (su sucesor) o el de otro partido, y no hay logo propio en Commons. Los logos son emblemas de cada organización, usados aquí solo para identificarla; la licencia de cada archivo está en `partyLogos.ts`.
+**27 de 31 con logo.** Los de *Centro Democrático* (el emblema del hombre con la mano al corazón) y *Alianza Verde* (el logo «Partido Verde» con el girasol) los aportó el usuario; `HINTS.manual` en el script impide que `npm run logos` los sobrescriba. Quedan como escudo con sigla *Opción Ciudadana* (se agregó con los congresistas y su logo aún no se ha buscado con `npm run logos`), *Sí Colombia*, *Colombia Democrática* y *Colombianas y Colombianos por la Paz*: Wikipedia solo enlaza para ellos el logo de «Somos» (su sucesor) o el de otro partido, y no hay logo propio en Commons. Los logos son emblemas de cada organización, usados aquí solo para identificarla; la licencia de cada archivo está en `partyLogos.ts`.
 
 ## Retratos
 
