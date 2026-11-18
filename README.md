@@ -15,7 +15,7 @@ npm run dev        # http://localhost:5173
 npm run build      # tsc -b && vite build
 npm run validate   # valida la base de datos y el generador de tableros (Grid)
 npm run simulate   # simula partidas contra el motor del juego (Grid)
-npm run validate:top10  # valida las 41 listas de Top 10 y prueba la coincidencia de nombres
+npm run validate:top10  # valida las 53 listas de Top 10 y prueba la coincidencia de nombres
 npm run fotos      # descarga retratos de los políticos a public/politicians/
 npm run logos      # descarga logos de partidos a public/parties/
 ```
@@ -158,7 +158,7 @@ Cada reto es una lista de **10 o 5 filas** numeradas. De cada fila se ve, antes 
 | **Fallos** | 3 vidas. Un nombre que no está en la lista cuesta una; un intento vago o ambiguo no. |
 | **Rendirse** | Botón de bandera (pide confirmar): revela las filas que faltan con su `dato_extra`. |
 | **Modo de tiempo** | **Normal** (sin límite) o **Contrarreloj 2 min** (120 s en cuenta regresiva; al llegar a 0 termina la partida). |
-| **Reto diario** | La misma lista para todos cada día: recorre las 41 listas en un orden fijo y mezclado, sin repetir hasta agotarlas. Solo cuenta el primer intento. La **racha** cuenta los días en que se aciertan **todas** las filas. |
+| **Reto diario** | La misma lista para todos cada día: recorre las 53 listas en un orden fijo y mezclado, sin repetir hasta agotarlas. Solo cuenta el primer intento. La **racha** cuenta los días en que se aciertan **todas** las filas. |
 | **Partida libre** | Categoría (o «Aleatoria») + modo de tiempo. |
 | **Compartir** | Texto con emojis: `1️⃣🟩 2️⃣🟩 3️⃣🟥 …`, vidas y modo. |
 
@@ -166,13 +166,13 @@ Cada reto es una lista de **10 o 5 filas** numeradas. De cada fila se ve, antes 
 
 ### Las listas
 
-`src/data/top10Lists.ts` reúne **41 listas** (21 de 10 filas y 20 de 5), 310 filas y 207 personas, con el esquema `Top10Challenge` → `Top10Item { posicion, nombre, aliases, partido, pista_visible, dato_extra }` más `fuente` y `nota` por lista (se muestran al terminar). `partido` es un `Partido` del catálogo o `null` (independiente o movimiento sin entrada): con `null` se pinta un marcador neutro.
+`src/data/top10Lists.ts` reúne **53 listas** (30 de 10 filas y 23 de 5), 415 filas y 288 personas, con el esquema `Top10Challenge` → `Top10Item { posicion, nombre, aliases, partido, pista_visible, dato_extra }` más `fuente` y `nota` por lista (se muestran al terminar). `partido` es un `Partido` del catálogo o `null` (independiente o movimiento sin entrada): con `null` se pinta un marcador neutro.
 
 | Categoría | Listas |
 | --- | --- |
 | **Últimos en el cargo** (23) | Presidentes · vicepresidentes · alcaldes de Bogotá, Medellín, Cali y Barranquilla · gobernadores de Antioquia (5) · presidentes del Senado y de la Cámara · ministros de Hacienda, Interior, Defensa, Educación, Salud, Comercio, Transporte y Ambiente · cancilleres · ministros de Trabajo y de Minas (5) · procuradores, contralores y fiscales (5) |
 | **Más votados en Congreso** (3) | Senado 2022 (5), 2018 y 2014 |
-| **Concejos y alcaldías** (2) | Alcaldes de Bogotá por votación total y por porcentaje (5) |
+| **Gobernaciones, alcaldías y concejos** (14) | Alcaldes de Bogotá por votación total y por porcentaje (5) · gobernadores más votados de 2011, 2015, 2019 y 2023 · alcaldes de capitales más votados de esas mismas elecciones · gobernadores 2023 con mayor porcentaje (5) · gobernadoras y alcaldesas de capitales más votadas 2011–2023 (5) · concejales electos de Barranquilla 2023 más votados |
 | **Presidenciales e hitos** (13) | Primera vuelta de 1994, 1998, 2002, 2006, 2010, 2014, 2018, 2022 y 2026 (5) · últimos 5 derrotados en segunda vuelta · 5 mujeres más votadas · top 10 de votos en una segunda y en una primera vuelta |
 
 Reglas de las listas «Últimos…»: la fila 1 es la más reciente; **cada persona cuenta una vez**, por su periodo más reciente (Peñalosa, Mockus o Char aparecen una sola vez aunque hayan repetido), y **no se cuentan interinos ni encargados**.
@@ -189,6 +189,8 @@ Todos los datos se contrastaron en noviembre de 2026 con Wikipedia (es/en: anexo
   - *Top 5 gobernadores de Antioquia más votados* y *constituyentes de 1991*: no se hallaron votos por candidato; en su lugar, «Últimos 5 gobernadores de Antioquia».
   - *«Presidentes desde Betancur hasta Petro»* son 9 nombres; con Abelardo de la Espriella (posesionado el 7 de agosto de 2026) son 10.
 - Los alcaldes de 1988–1990 de Barranquilla son un caso especial: ganó Jaime Pumarejo Certain, pero el Consejo de Estado anuló mesas y declaró ganador a su primo Gustavo Certain Duncan.
+
+- **Listas regionales** (`top10/regionales.ts`): votos y porcentajes de los ganadores según las tablas de Wikipedia de las elecciones regionales de 2011, 2015, 2019 y 2023, las mismas de las fichas regionales. Pueden diferir un poco del escrutinio oficial (Galán 2023: 1.499.734 aquí y 1.497.596 en El Tiempo). Tres filas de la fuente estaban incompletas: Pasto 2023 sin votos (no entra en el top: unos 74.000 según la prensa), Santa Marta 2023 sin porcentaje y Riohacha 2023 con una errata («35;67%»). Por eso no hay lista de alcaldes por porcentaje. La de concejales de Barranquilla solo incluye a los elegidos.
 
 Para agregar una lista, escribe una entrada con `lista({...})` en el archivo de `src/data/top10/` que corresponda (cada fila es `[nombre, aliases, partido, pista, extra]`) y corre `npm run validate:top10`: comprueba posiciones, que el nombre y cada alias lleven a su fila, que los votos bajen (o los años retrocedan) fila a fila y los avisos de aliases ambiguos.
 

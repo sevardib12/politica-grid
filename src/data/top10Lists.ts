@@ -8,6 +8,7 @@
 //   cargos-congreso-control.ts  presidentes del Senado y la Cámara, Procurador, Contralor, Fiscal
 //   votos.ts                    Senado 2014/2018/2022 y alcaldes de Bogotá por votación
 //   presidenciales.ts           primeras y segundas vueltas, mujeres, derrotados
+//   regionales.ts               gobernadores, alcaldes de capitales y concejales por votos (2011–2023)
 //
 // `npm run validate:top10` comprueba la estructura (posiciones, tamaños, aliases sin choques).
 
@@ -15,6 +16,7 @@ import { CARGOS_CONGRESO_CONTROL } from './top10/cargos-congreso-control.ts'
 import { CARGOS_EJECUTIVO } from './top10/cargos-ejecutivo.ts'
 import { CARGOS_TERRITORIAL } from './top10/cargos-territorial.ts'
 import { PRESIDENCIALES } from './top10/presidenciales.ts'
+import { REGIONALES } from './top10/regionales.ts'
 import { VOTOS_ALCALDIAS, VOTOS_CONGRESO } from './top10/votos.ts'
 import type { Top10Challenge } from './top10Types.ts'
 
@@ -27,6 +29,7 @@ export const TOP10_LISTS: readonly Top10Challenge[] = [
   ...CARGOS_CONGRESO_CONTROL,
   ...VOTOS_CONGRESO,
   ...VOTOS_ALCALDIAS,
+  ...REGIONALES,
   ...PRESIDENCIALES,
 ]
 

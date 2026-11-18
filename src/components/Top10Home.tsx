@@ -17,7 +17,7 @@ const CATEGORIES: Top10Category[] = ['cargos', 'congreso', 'alcaldias', 'preside
 const CATEGORY_HINT: Record<Top10Category, string> = {
   cargos: 'Presidentes, alcaldes, ministros, procuradores…',
   congreso: 'Senadores más votados',
-  alcaldias: 'Alcaldes de Bogotá por votos',
+  alcaldias: 'Gobernadores, alcaldes de capitales y concejales por votos',
   presidenciales: 'Primeras y segundas vueltas, mujeres',
 }
 

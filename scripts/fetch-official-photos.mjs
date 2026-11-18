@@ -45,9 +45,10 @@ const FUENTE = {
   camara: 'Cámara de Representantes',
   oficial: 'Presidencia / Ministerio',
   congresoVisible: 'Congreso Visible (Uniandes)',
+  concejoMedellin: 'Concejo de Medellín',
   wikimedia: 'Wikimedia',
 }
-const OFICIALES = new Set([FUENTE.senado, FUENTE.camara, FUENTE.oficial])
+const OFICIALES = new Set([FUENTE.senado, FUENTE.camara, FUENTE.oficial, FUENTE.concejoMedellin])
 
 /**
  * Páginas de perfil oficiales (.gov.co) de Presidencia o Ministerios, por id de
@@ -397,6 +398,31 @@ function congresoVisibleCandidates(p, names, index) {
   ]
 }
 
+// ── Fuente 2b: Concejo de Medellín (perfiles con og:image) ──────────────
+
+function slug(text) {
+  return tokens(text).join('-')
+}
+
+/** Perfiles del Concejo de Medellín: la URL sale del nombre (con y sin segundos nombres). */
+async function concejoMedellinCandidates(p) {
+  const t = tokens(p.nombre)
+  const variants = [slug(p.nombre), [t[0], ...t.slice(-2)].join('-'), [...t.slice(0, 2), ...t.slice(-2)].join('-')]
+  for (const v of [...new Set(variants)]) {
+    const url = `https://www.concejodemedellin.gov.co/blog/concejales/${v}/`
+    const html = await getText(url)
+    if (!html) continue
+    const title = /<meta property="og:title" content="([^"]+)"/.exec(html)?.[1]?.replace(/ - Concejo de Medellín$/, '')
+    const image = /<meta property="og:image" content="([^"]+)"/.exec(html)?.[1]
+    if (!title || !image || !nameMatches(p.nombre, title)) {
+      why(`Concejo de Medellín: ${url} no corresponde a ${p.nombre} (${title ?? 'sin título'})`)
+      continue
+    }
+    return [{ url: image, fuente: FUENTE.concejoMedellin, origen: url, etiqueta: title }]
+  }
+  return []
+}
+
 // ── Fuente 3: Wikipedia / Wikimedia Commons ───────────────────────────────
 
 const WIKI_DESC = /colombian|polític|president|senador|represent|alcald|gobernador|ministr|candidat|guerrill|diplom|embajador|abogad|economista|periodista|congres|fiscal|procurador|contralor|registrador|constituyente|sindical|activista|ingenier/i
@@ -406,6 +432,17 @@ const WIKI_DESC = /colombian|polític|president|senador|represent|alcald|goberna
  * (apodos, nombres formales distintos al título). id → título.
  */
 const WIKI_TITLES = {}
+// Fichas regionales: título del artículo que enlazaban las propias tablas electorales de Wikipedia.
+try {
+  Object.assign(WIKI_TITLES, JSON.parse(await readFile(path.join(ROOT, 'scripts', 'wiki-titulos-regionales.json'), 'utf8')))
+} catch {
+  /* sin títulos regionales */
+}
+
+/** Lugares de los cargos de una ficha regional (para exigir que el artículo hable de ellos). */
+function regionalPlaces(p) {
+  return [...p.territorial.gobernador, ...p.territorial.alcalde, ...p.territorial.concejal].map((x) => tokens(x).join(' '))
+}
 
 function wikiQueries(p) {
   const t = tokens(p.nombre)
@@ -416,7 +453,9 @@ function wikiQueries(p) {
 
 async function wikiCandidates(lang, p, names) {
   const host = `${lang}.wikipedia.org`
-  for (const q of wikiQueries(p)) {
+  // Fichas regionales: solo el artículo conocido (sin búsqueda libre, que rinde poco y arriesga homónimos).
+  const queries = p.perfil_regional ? (WIKI_TITLES[p.id] ? wikiQueries(p).slice(0, 1) : []) : wikiQueries(p)
+  for (const q of queries) {
     const forced = Boolean(WIKI_TITLES[p.id]) && q === wikiQueries(p)[0]
     const search = forced
       ? { pages: [{ key: WIKI_TITLES[p.id].replace(/ /g, '_'), title: WIKI_TITLES[p.id], description: 'político colombiano' }] }
@@ -430,6 +469,14 @@ async function wikiCandidates(lang, p, names) {
       if (!/colombia/i.test(blob) || !WIKI_DESC.test(blob)) {
         why(`Wikipedia (${lang}): «${page.title}» no parece un político colombiano`)
         continue
+      }
+      // Ficha regional hallada por búsqueda: el artículo debe nombrar su departamento o ciudad (evita homónimos).
+      if (p.perfil_regional && !forced) {
+        const text = tokens(blob).join(' ')
+        if (!regionalPlaces(p).some((place) => text.includes(place))) {
+          why(`Wikipedia (${lang}): «${page.title}» no menciona ${regionalPlaces(p).join(' / ')}; se descarta por posible homónimo`)
+          continue
+        }
       }
       const original = summary.originalimage
       const thumb = summary.thumbnail
@@ -556,10 +603,14 @@ async function main() {
     if (!hit && (p.congreso.senador || p.congreso.representante_camara)) {
       hit = await tryCandidates(p, congresoVisibleCandidates(p, names, cvIndex))
     }
-    // 3. Wikipedia / Wikimedia
+    // 2b. Concejo de Medellín
+    if (!hit && p.territorial.concejal.includes('Medellín')) {
+      hit = await tryCandidates(p, await concejoMedellinCandidates(p))
+    }
+    // 3. Wikipedia / Wikimedia (las fichas regionales solo en español: la edición en inglés casi nunca las cubre)
     if (!hit && !NO_WIKI) {
       hit = await tryCandidates(p, await wikiCandidates('es', p, names))
-      if (!hit) hit = await tryCandidates(p, await wikiCandidates('en', p, names))
+      if (!hit && !p.perfil_regional) hit = await tryCandidates(p, await wikiCandidates('en', p, names))
     }
     return hit
   }

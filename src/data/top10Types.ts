@@ -8,7 +8,7 @@ export type Top10Category = 'cargos' | 'congreso' | 'alcaldias' | 'presidenciale
 export const TOP10_CATEGORY_LABEL: Record<Top10Category, string> = {
   cargos: 'Últimos en el cargo',
   congreso: 'Más votados en Congreso',
-  alcaldias: 'Concejos y alcaldías',
+  alcaldias: 'Gobernaciones, alcaldías y concejos',
   presidenciales: 'Presidenciales e hitos',
 }
 
