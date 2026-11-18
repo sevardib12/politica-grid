@@ -319,7 +319,6 @@ export function Top10Game({
                       type="button"
                       onMouseDown={(e) => e.preventDefault()}
                       onClick={() => send(s)}
-                      onMouseEnter={() => setActive(i)}
                       className={`block w-full px-4 py-2 text-left text-sm font-semibold ${i === active ? 'bg-gold/15 text-gold' : 'text-slate-100 hover:bg-white/5'}`}
                     >
                       {s}

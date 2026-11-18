@@ -2,23 +2,18 @@ import {
   ArrowLeft,
   Check,
   Clock,
-  Heart,
   Home,
   Info,
   RotateCcw,
   Share2,
-  SkipForward,
   Skull,
   Timer,
   Trophy,
   TriangleAlert,
 } from 'lucide-react'
 import { useState } from 'react'
-import { POLITICIANS_BY_ID } from '../data/politicians.ts'
 import {
   MAX_ATTEMPTS,
-  MAX_ERRORS,
-  MAX_SKIPS,
   describeEnd,
   type GameConfig,
   type GameState,
@@ -27,47 +22,24 @@ import { shareText } from '../game/share.ts'
 import { formatDuration } from '../game/stats.ts'
 import { useGame } from '../game/useGame.ts'
 import { boardCriteria } from '../utils/gridGenerator.ts'
-import { PartyChips } from './PartyLogo.tsx'
-import { PoliticianAvatar } from './PoliticianAvatar.tsx'
 import { Grid } from './Grid.tsx'
-import { DIFFICULTY_LABEL, MODE_LABEL } from './labels.ts'
+import { DIFFICULTY_LABEL } from './labels.ts'
 import { SearchModal } from './SearchModal.tsx'
 import { SolutionModal } from './SolutionModal.tsx'
 import { Chip } from './ui.tsx'
 
 function Hud({ state, timeLeft, elapsedMs }: { state: GameState; timeLeft: number | null; elapsedMs: number }) {
   const { config } = state
-  const ruleta = config.mode === 'ruleta'
   const urgent = timeLeft !== null && timeLeft <= 10
   const fraction = timeLeft !== null && config.timer > 0 ? timeLeft / config.timer : 0
 
   return (
     <div className="mb-4 rounded-2xl border border-line bg-panel px-4 py-3">
       <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 text-sm">
-        {ruleta ? (
-          <div className="flex items-center gap-1" aria-label={`Errores: ${state.errors} de ${MAX_ERRORS}`}>
-            {Array.from({ length: MAX_ERRORS }).map((_, i) => (
-              <Heart
-                key={i}
-                size={20}
-                aria-hidden="true"
-                className={i < MAX_ERRORS - state.errors ? 'fill-bad text-bad' : 'text-slate-600'}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="font-semibold text-slate-200">
-            Intentos: <span className="text-gold">{state.attemptsLeft}</span>
-            <span className="text-slate-500"> / {MAX_ATTEMPTS}</span>
-          </div>
-        )}
-
-        {ruleta && (
-          <div className="font-semibold text-slate-200">
-            Saltos: <span className="text-gold">{state.skipsLeft}</span>
-            <span className="text-slate-500"> / {MAX_SKIPS}</span>
-          </div>
-        )}
+        <div className="font-semibold text-slate-200">
+          Intentos: <span className="text-gold">{state.attemptsLeft}</span>
+          <span className="text-slate-500"> / {MAX_ATTEMPTS}</span>
+        </div>
 
         <div className="font-semibold text-slate-200">
           Casillas: <span className="text-ok">{state.cells.filter(Boolean).length}</span>
@@ -115,43 +87,6 @@ function FeedbackToast({ state }: { state: GameState }) {
     <div role="status" className={`animate-rise flex min-h-10 items-start gap-2 rounded-xl border px-3 py-2 text-sm font-semibold ${tone}`}>
       <Icon size={16} className="mt-0.5 shrink-0" aria-hidden="true" />
       <span>{fb.kind === 'ok' ? `¡Bien! ${fb.text}` : fb.text}</span>
-    </div>
-  )
-}
-
-function RuletaPanel({ state, onSkip }: { state: GameState; onSkip: () => void }) {
-  const politician = state.current ? POLITICIANS_BY_ID.get(state.current) : null
-  const auto = state.autoCell !== null
-  return (
-    <div className="rounded-3xl border border-gold/30 bg-gradient-to-b from-gold/10 to-panel p-4 sm:p-5">
-      <p className="text-[11px] font-extrabold uppercase tracking-widest text-gold lg:text-center">Político en turno</p>
-      {politician ? (
-        <div key={politician.id} className="mt-3 flex flex-col gap-3 lg:mt-4 lg:items-center lg:text-center">
-          <div className="flex items-center gap-4 lg:flex-col lg:gap-3">
-            <PoliticianAvatar politician={politician} size={96} smallSize={64} priority />
-            <div className="min-w-0">
-              <p className="text-lg font-black leading-tight text-slate-50 lg:text-xl">{politician.nombre}</p>
-              {politician.alias && <p className="mt-0.5 text-sm italic text-slate-400">“{politician.alias}”</p>}
-            </div>
-          </div>
-          <PartyChips partidos={politician.partidos} size="sm" className="lg:justify-center" />
-          <p className="text-sm text-slate-300 lg:max-w-[16rem]">
-            {auto
-              ? 'Solo encaja en una casilla libre: se ubicará automáticamente…'
-              : 'Toca la casilla del tablero donde encaje. Un error te cuesta una vida.'}
-          </p>
-          <button
-            type="button"
-            onClick={onSkip}
-            disabled={state.skipsLeft === 0 || auto}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-ink/60 px-4 py-2 text-sm font-bold text-slate-100 transition hover:border-cyan hover:text-cyan disabled:opacity-40 disabled:hover:border-line disabled:hover:text-slate-100"
-          >
-            <SkipForward size={16} aria-hidden="true" /> Saltar político ({state.skipsLeft})
-          </button>
-        </div>
-      ) : (
-        <p className="mt-4 text-sm text-slate-400">Preparando el siguiente político…</p>
-      )}
     </div>
   )
 }
@@ -269,8 +204,7 @@ export function GameScreen({
 
   const onCellClick = (cell: number) => {
     if (!playing) return setSolutionCell(cell)
-    if (config.mode === 'ruleta') game.place(cell)
-    else game.selectCell(cell)
+    game.selectCell(cell)
   }
 
   return (
@@ -285,8 +219,7 @@ export function GameScreen({
         </button>
         <div className="flex flex-wrap items-center gap-1.5">
           {config.daily && <Chip tone="gold">Reto diario</Chip>}
-          <Chip tone="cyan">{MODE_LABEL[config.mode]}</Chip>
-          <Chip>{DIFFICULTY_LABEL[config.difficulty]}</Chip>
+                    <Chip>{DIFFICULTY_LABEL[config.difficulty]}</Chip>
           <Chip>{config.timer === 0 ? 'Sin tiempo' : `${config.timer} s por turno`}</Chip>
         </div>
       </header>
@@ -302,18 +235,14 @@ export function GameScreen({
         <aside className={`space-y-3 lg:sticky lg:top-4 lg:order-2 ${playing ? 'order-1' : 'order-3'}`}>
           <FeedbackToast state={state} />
           {playing ? (
-            config.mode === 'ruleta' ? (
-              <RuletaPanel state={state} onSkip={game.skip} />
-            ) : (
-              <LibrePanel state={state} />
-            )
+            <LibrePanel state={state} />
           ) : (
             <ResultPanel state={state} elapsedMs={game.elapsedMs} onPlayAgain={onPlayAgain} onExit={onExit} />
           )}
         </aside>
       </div>
 
-      {playing && config.mode === 'libre' && state.selectedCell !== null && (
+      {playing && state.selectedCell !== null && (
         <SearchModal
           row={rows[Math.floor(state.selectedCell / 3)]}
           col={cols[state.selectedCell % 3]}

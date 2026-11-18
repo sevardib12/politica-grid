@@ -10,7 +10,7 @@ type Screen = { name: 'home' } | { name: 'game'; config: GameConfig; id: number 
 
 export function GridApp() {
   const [screen, setScreen] = useState<Screen>({ name: 'home' })
-  const [settings, setSettings] = useState<Settings>({ mode: 'ruleta', timer: 0, difficulty: 'normal' })
+  const [settings, setSettings] = useState<Settings>({ mode: 'libre', timer: 0, difficulty: 'normal' })
   const [stats, setStats] = useState<Stats>(() => loadStats())
   const statsRef = useRef(stats)
   const [showStats, setShowStats] = useState(false)

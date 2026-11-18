@@ -1,10 +1,10 @@
-import { BarChart3, CalendarDays, ChevronDown, Flame, Play, Shuffle, Search } from 'lucide-react'
+import { BarChart3, CalendarDays, ChevronDown, Flame, Play } from 'lucide-react'
 import { useState } from 'react'
 import type { Mode, TimerSeconds } from '../game/engine.ts'
 import { currentStreak, dailyDifficulty, dateKey, formatDuration, type Stats } from '../game/stats.ts'
 import { DIFFICULTIES, type Difficulty } from '../utils/gridGenerator.ts'
 import { POLITICIANS } from '../data/politicians.ts'
-import { DIFFICULTY_HINT, DIFFICULTY_LABEL, MODE_LABEL } from './labels.ts'
+import { DIFFICULTY_HINT, DIFFICULTY_LABEL } from './labels.ts'
 import { Segmented } from './ui.tsx'
 
 export interface Settings {
@@ -13,12 +13,8 @@ export interface Settings {
   difficulty: Difficulty
 }
 
-const MODE_TEXT: Record<Mode, string> = {
-  ruleta:
-    'Te vamos mostrando políticos uno por uno. Elige en qué casilla ubicarlos (3 errores y 3 saltos como máximo). Si solo encajan en una casilla, se ubican solos.',
-  libre:
-    'Las 9 casillas están abiertas. Toca una, busca al político por nombre y acierta con solo 9 intentos en total.',
-}
+const MODE_TEXT =
+  'Las 9 casillas están abiertas. Toca una, busca al político por nombre y acierta con 9 intentos en total.'
 
 export function HomeScreen({
   settings,
@@ -112,25 +108,7 @@ export function HomeScreen({
         </h2>
 
         <div className="space-y-5">
-          <div>
-            <Segmented
-              label="Modo de juego"
-              value={settings.mode}
-              onChange={(mode) => onSettings({ ...settings, mode })}
-              options={[
-                { value: 'ruleta', label: MODE_LABEL.ruleta },
-                { value: 'libre', label: MODE_LABEL.libre },
-              ]}
-            />
-            <p className="mt-2 flex gap-2 text-xs leading-relaxed text-slate-400">
-              {settings.mode === 'ruleta' ? (
-                <Shuffle size={14} className="mt-0.5 shrink-0 text-cyan" aria-hidden="true" />
-              ) : (
-                <Search size={14} className="mt-0.5 shrink-0 text-cyan" aria-hidden="true" />
-              )}
-              {MODE_TEXT[settings.mode]}
-            </p>
-          </div>
+          <p className="-mb-1 text-sm leading-relaxed text-slate-300">{MODE_TEXT}</p>
 
           <Segmented
             label="Temporizador (por turno)"

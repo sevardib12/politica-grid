@@ -1,7 +1,6 @@
 import { Eye, Info, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { POLITICIANS_BY_ID } from '../data/politicians.ts'
-import type { Politician } from '../data/types.ts'
 import { cellParties, explainCell, type Board } from '../utils/gridGenerator.ts'
 import { PoliticianAvatar } from './PoliticianAvatar.tsx'
 
@@ -14,14 +13,12 @@ export interface GridCellProps {
   /** Partida terminada: cualquier casilla abre el solucionario. */
   revealed: boolean
   flash: 'ok' | 'error' | null
-  /** Ruleta: casilla donde se ubicará solo el político actual. */
-  ghost: Politician | null
   /** Búsqueda libre: casilla con el buscador abierto. */
   selected: boolean
   onClick: () => void
 }
 
-export function GridCell({ board, cell, politicianId, interactive, revealed, flash, ghost, selected, onClick }: GridCellProps) {
+export function GridCell({ board, cell, politicianId, interactive, revealed, flash, selected, onClick }: GridCellProps) {
   const [open, setOpen] = useState(false)
   const politician = politicianId ? (POLITICIANS_BY_ID.get(politicianId) ?? null) : null
   const col = cell % 3
@@ -74,18 +71,6 @@ export function GridCell({ board, cell, politicianId, interactive, revealed, fla
             </ul>
           </div>
         )}
-      </div>
-    )
-  }
-
-  if (ghost) {
-    return (
-      <div className={`${base} animate-pulse-ring border-gold bg-gold/10`}>
-        <div className="flex flex-col items-center gap-1 opacity-80">
-          <PoliticianAvatar politician={ghost} size={36} priority />
-          <span className="line-clamp-2 text-balance text-[10px] font-bold leading-tight text-gold sm:text-xs">{ghost.nombre}</span>
-          <span className="text-[9px] font-semibold uppercase tracking-wider text-gold/80">encaja aquí</span>
-        </div>
       </div>
     )
   }

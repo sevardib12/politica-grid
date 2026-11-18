@@ -1,5 +1,4 @@
 import { Fragment } from 'react'
-import { POLITICIANS_BY_ID } from '../data/politicians.ts'
 import type { GameState } from '../game/engine.ts'
 import { boardCriteria } from '../utils/gridGenerator.ts'
 import { CriterionHeader } from './CriterionHeader.tsx'
@@ -14,8 +13,6 @@ export function Grid({
 }) {
   const { rows, cols } = boardCriteria(state.board)
   const playing = state.status === 'playing'
-  const ruleta = state.config.mode === 'ruleta'
-  const current = state.current ? (POLITICIANS_BY_ID.get(state.current) ?? null) : null
 
   return (
     <div
@@ -35,7 +32,7 @@ export function Grid({
             const placed = state.cells[cell]
             const fb = state.feedback
             const flash = fb && 'cell' in fb && fb.cell === cell ? (fb.kind === 'ok' ? 'ok' : fb.kind === 'error' ? 'error' : null) : null
-            const interactive = playing && placed === null && (ruleta ? current !== null && state.autoCell === null : true)
+            const interactive = playing && placed === null
             return (
               <GridCell
                 key={cell}
@@ -45,7 +42,6 @@ export function Grid({
                 interactive={interactive}
                 revealed={!playing}
                 flash={flash}
-                ghost={playing && ruleta && state.autoCell === cell ? current : null}
                 selected={state.selectedCell === cell}
                 onClick={() => onCellClick(cell)}
               />

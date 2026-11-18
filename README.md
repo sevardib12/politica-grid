@@ -26,7 +26,7 @@ Cada casilla cruza el criterio de su fila con el de su columna (p. ej. *Senador/
 
 | Opción | Valores |
 | --- | --- |
-| **Modo** | **Ruleta**: salen políticos uno por uno; si encajan en varias casillas libres eliges dónde, si solo encajan en una se ubican solos. 3 errores y 3 saltos como máximo. **Búsqueda libre**: 9 casillas abiertas, buscador con autocompletado (debounce, sin tildes) y 9 intentos en total. |
+| **Modo** | **Búsqueda libre**: 9 casillas abiertas, buscador con autocompletado (debounce, sin tildes) y 9 intentos en total. |
 | **Temporizador** | Sin tiempo, 90 s, 60 s, 40 s **por turno**. Si se acaba, termina la partida. |
 | **Dificultad** | **Fácil**: ≥ 7 políticos válidos por casilla. **Normal**: 4 a 8. **Difícil**: criterios de nicho (circunscripción de Cámara, comisiones, asambleas, década exacta) con varias casillas de 2 o 3 opciones. **Leyenda**: 1 o 2 respuestas por casilla en toda la base de datos. |
 | **Reto diario** | Mismo tablero para todos cada día (semilla = fecha). La dificultad depende del día de la semana; solo cuenta el primer intento. |
@@ -35,7 +35,6 @@ Al terminar (victoria, tiempo, errores o intentos) se puede tocar cualquier casi
 
 Decisiones de diseño donde el enunciado dejaba margen:
 
-- En la Ruleta, un político saltado o fallado **vuelve al mazo** más adelante (no se descarta para siempre), de modo que el tablero siga siendo ganable. Si ya no queda forma de completarlo, la partida termina por «sin opciones».
 - Un político repetido en la búsqueda libre no gasta intento.
 - La racha diaria cuenta días consecutivos con el reto diario **ganado**.
 
@@ -62,7 +61,7 @@ src/
     matching.ts         emparejamiento bipartito (algoritmo de Kuhn)
     rng.ts, text.ts, search.ts, color.ts
   game/
-    engine.ts           reducer puro: Ruleta y Búsqueda libre
+    engine.ts           reducer puro de Búsqueda libre
     useGame.ts          hook (temporizador, ubicación automática, avisos)
     stats.ts, share.ts  estadísticas, racha diaria, texto compartible
   components/           pantallas y piezas de interfaz
@@ -175,7 +174,7 @@ Para agregar una lista, escribe una entrada con `lista({...})` en el archivo de 
 
 `src/data/parties.ts` es el catálogo de los 30 partidos del vocabulario: `id` (slug), nombre oficial, `sigla`, `color_primario` y `color_secundario` (tomados mirando cada logo; no hay manuales de marca oficiales) y `logo_url`. `npm run logos` (`scripts/fetch-party-logos.mjs`) busca la página del partido en Wikipedia, lee el parámetro `logo` de su ficha, baja la miniatura de 250 px desde Wikimedia (los SVG llegan como PNG) y comprueba que sea una imagen real de más de 1 KB. Guarda autor y licencia (`logo_licencia`) y rechaza un mismo archivo para dos partidos.
 
-`<PartyLogo />` muestra el logo sobre un recuadro claro (`bg-white/95`, `object-contain`); si no hay imagen, o falla, dibuja un **escudo con la sigla** en los colores del partido. Se usa en los encabezados del tablero, en la esquina de los avatares, en el solucionario, en la Ruleta y en cada fila de Top 10.
+`<PartyLogo />` muestra el logo sobre un recuadro claro (`bg-white/95`, `object-contain`); si no hay imagen, o falla, dibuja un **escudo con la sigla** en los colores del partido. Se usa en los encabezados del tablero, en la esquina de los avatares, en el solucionario y en cada fila de Top 10.
 
 **27 de 30 con logo.** Los de *Centro Democrático* (el emblema del hombre con la mano al corazón) y *Alianza Verde* (el logo «Partido Verde» con el girasol) los aportó el usuario; `HINTS.manual` en el script impide que `npm run logos` los sobrescriba. Quedan como escudo con sigla *Sí Colombia*, *Colombia Democrática* y *Colombianas y Colombianos por la Paz*: Wikipedia solo enlaza para ellos el logo de «Somos» (su sucesor) o el de otro partido, y no hay logo propio en Commons. Los logos son emblemas de cada organización, usados aquí solo para identificarla; la licencia de cada archivo está en `partyLogos.ts`.
 

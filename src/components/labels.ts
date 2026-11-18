@@ -16,7 +16,6 @@ export const DIFFICULTY_HINT: Record<Difficulty, string> = {
 }
 
 export const MODE_LABEL: Record<Mode, string> = {
-  ruleta: 'Ruleta',
   libre: 'Búsqueda libre',
 }
 

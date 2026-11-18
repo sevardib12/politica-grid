@@ -16,7 +16,7 @@ export const CARGOS_TERRITORIAL: Top10Challenge[] = [
     fuente: `${WP}: Anexo:Alcaldes de Bogotá; votos de El Tiempo («Así han sido las contiendas por la Alcaldía de Bogotá»).`,
     nota: 'Los alcaldes encargados (Sonia Durán, Paul Bromberg, María Fernanda Campo, Clara López, Rafael Pardo y Mercedes Maldonado) no cuentan.',
     items: [
-      ['Carlos Fernando Galán', ['Galán', 'Carlos Fernando Galan', 'Galan'], 'Nuevo Liberalismo', '2024–2027', 'Elegido en 2023 con 1.497.596 votos (49,02 %), en su tercer intento.'],
+      ['Carlos Fernando Galán Pachón', ['Carlos Fernando Galán', 'Galán', 'Carlos Fernando Galan', 'Galan', 'Carlos Galán'], 'Nuevo Liberalismo', '2024–2027', 'Elegido en 2023 con 1.497.596 votos (49,02 %), en su tercer intento.'],
       ['Claudia López', ['López', 'Claudia Lopez', 'Claudia López Hernández'], 'Alianza Verde', '2020–2023', 'Primera mujer elegida alcaldesa de Bogotá: 1.108.541 votos (35,21 %) en 2019.'],
       ['Enrique Peñalosa', ['Peñalosa', 'Enrique Peñalosa Londoño', 'Penalosa'], null, '2016–2019', 'Elegido en 2015 con 906.058 votos (33,18 %). Ya había sido alcalde en 1998–2000.'],
       ['Gustavo Petro', ['Petro', 'Gustavo Petro Urrego'], null, '2012–2015', 'Elegido en 2011 con 723.157 votos (33,36 %) por el movimiento Progresistas. Fue destituido en 2014 y reintegrado el 23 de abril de ese año.'],

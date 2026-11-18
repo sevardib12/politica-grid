@@ -1,17 +1,14 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { initGame, reducer, type GameConfig, type GameState } from './engine.ts'
 
-const AUTO_PLACE_MS = 1100
 const FEEDBACK_MS = 2600
 
 export interface UseGame {
   state: GameState
-  /** Segundos que quedan en el turno (null si no hay temporizador o está en pausa). */
+  /** Segundos que quedan en el turno (null si no hay temporizador). */
   timeLeft: number | null
   /** Milisegundos transcurridos desde el inicio (congelado al terminar). */
   elapsedMs: number
-  place: (cell: number) => void
-  skip: () => void
   selectCell: (cell: number | null) => void
   guess: (politicianId: string) => void
 }
@@ -26,9 +23,9 @@ export function useGame(config: GameConfig, onFinish?: (state: GameState) => voi
   }, [onFinish])
 
   const playing = state.status === 'playing'
-  const timed = playing && state.config.timer > 0 && state.autoCell === null
+  const timed = playing && state.config.timer > 0
 
-  // Reloj: sólo corre mientras hay una partida en curso.
+  // Reloj: solo corre mientras hay una partida en curso.
   useEffect(() => {
     if (!playing) return
     const id = window.setInterval(() => setNow(Date.now()), 250)
@@ -43,13 +40,6 @@ export function useGame(config: GameConfig, onFinish?: (state: GameState) => voi
   useEffect(() => {
     if (timed && timeLeft !== null && timeLeft <= 0) dispatch({ type: 'TIMEOUT', now: Date.now() })
   }, [timed, timeLeft])
-
-  // Ubicación automática con una animación breve.
-  useEffect(() => {
-    if (state.autoCell === null || !playing) return
-    const id = window.setTimeout(() => dispatch({ type: 'AUTO_PLACE', now: Date.now() }), AUTO_PLACE_MS)
-    return () => window.clearTimeout(id)
-  }, [state.autoCell, state.current, playing])
 
   // Los mensajes se desvanecen solos.
   useEffect(() => {
@@ -66,8 +56,6 @@ export function useGame(config: GameConfig, onFinish?: (state: GameState) => voi
     }
   }, [state])
 
-  const place = useCallback((cell: number) => dispatch({ type: 'PLACE', cell, now: Date.now() }), [])
-  const skip = useCallback(() => dispatch({ type: 'SKIP', now: Date.now() }), [])
   const selectCell = useCallback(
     (cell: number | null) => dispatch({ type: 'SELECT_CELL', cell, now: Date.now() }),
     [],
@@ -79,5 +67,5 @@ export function useGame(config: GameConfig, onFinish?: (state: GameState) => voi
 
   const elapsedMs = (state.endedAt ?? now) - state.startedAt
 
-  return { state, timeLeft, elapsedMs, place, skip, selectCell, guess }
+  return { state, timeLeft, elapsedMs, selectCell, guess }
 }

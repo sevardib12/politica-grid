@@ -79,7 +79,7 @@ export const VOTOS_ALCALDIAS: Top10Challenge[] = [
     fuente: 'El Tiempo, «Así han sido las contiendas por la Alcaldía de Bogotá en su historia» (cifras de cada elección).',
     nota: 'Las cifras varían levemente entre preconteo y escrutinio según la fuente (p. ej., Samuel Moreno: 915.769 o 920.013). El orden no cambia.',
     items: [
-      ['Carlos Fernando Galán', ['Galán', 'Carlos Fernando Galan', 'Galan'], 'Nuevo Liberalismo', '1.497.596 votos · 2023', 'El 49,02 % de los votos; el alcalde más votado de la historia de Bogotá.'],
+      ['Carlos Fernando Galán Pachón', ['Carlos Fernando Galán', 'Galán', 'Carlos Fernando Galan', 'Galan', 'Carlos Galán'], 'Nuevo Liberalismo', '1.497.596 votos · 2023', 'El 49,02 % de los votos; el alcalde más votado de la historia de Bogotá.'],
       ['Claudia López', ['López', 'Claudia Lopez', 'Claudia López Hernández'], 'Alianza Verde', '1.108.541 votos · 2019', 'El 35,21 % de los votos. Primera mujer elegida alcaldesa de Bogotá.'],
       ['Samuel Moreno', ['Moreno', 'Samuel Moreno Rojas'], 'Polo Democrático', '920.013 votos · 2007', 'El 43,94 % de los votos.'],
       ['Enrique Peñalosa', ['Peñalosa', 'Enrique Peñalosa Londoño', 'Penalosa'], null, '906.058 votos · 2015', 'El 33,18 % de los votos en 2015; en 1997 había ganado con 619.086 votos.'],
@@ -96,7 +96,7 @@ export const VOTOS_ALCALDIAS: Top10Challenge[] = [
     items: [
       ['Juan Martín Caicedo Ferrer', ['Caicedo', 'Juan Martín Caicedo', 'Caicedo Ferrer', 'Juan Martin Caicedo'], 'Partido Liberal', '65 % · 1990', 'Ganó con 597.295 votos, la mayor proporción de la historia.'],
       ['Antanas Mockus', ['Mockus', 'Antanas Mockus Sivickas'], null, '64,51 % · 1994', 'Ganó con 492.389 votos en 1994 por el Movimiento Cívico y fue reelegido en 2000.'],
-      ['Carlos Fernando Galán', ['Galán', 'Carlos Fernando Galan', 'Galan'], 'Nuevo Liberalismo', '49,02 % · 2023', 'Ganó con 1.497.596 votos en primera vuelta, la votación más alta de la historia.'],
+      ['Carlos Fernando Galán Pachón', ['Carlos Fernando Galán', 'Galán', 'Carlos Fernando Galan', 'Galan', 'Carlos Galán'], 'Nuevo Liberalismo', '49,02 % · 2023', 'Ganó con 1.497.596 votos en primera vuelta, la votación más alta de la historia.'],
       ['Enrique Peñalosa', ['Peñalosa', 'Enrique Peñalosa Londoño', 'Penalosa'], null, '48,82 % · 1997', 'Ganó con 619.086 votos en 1997; fue reelegido en 2015.'],
       ['Jaime Castro', ['Castro', 'Jaime Castro Castro'], 'Partido Liberal', '48,17 % · 1992', 'Ganó con 310.654 votos en 1992.'],
     ],
