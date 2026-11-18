@@ -1,6 +1,8 @@
 // Service worker de Urna: la red manda y, si no hay conexión, se usa lo guardado.
 // Así cada visita trae la versión nueva, y el juego sigue abriendo sin internet.
-const CACHE = 'politica-grid-v1'
+// `cache: 'no-cache'` obliga a preguntarle al servidor: sin eso, fetch usa la caché HTTP del navegador
+// (GitHub Pages la deja vigente 10 minutos) y se seguía sirviendo la página de antes de cada publicación.
+const CACHE = 'urna-v1'
 
 self.addEventListener('install', () => {
   self.skipWaiting()
@@ -24,7 +26,7 @@ self.addEventListener('fetch', (event) => {
     (async () => {
       const cache = await caches.open(CACHE)
       try {
-        const respuesta = await fetch(request)
+        const respuesta = await fetch(request, { cache: 'no-cache' })
         if (respuesta.ok) cache.put(request, respuesta.clone())
         return respuesta
       } catch (error) {

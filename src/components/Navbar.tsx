@@ -22,7 +22,7 @@ export function Navbar({ game, onChange }: { game: GameId; onChange: (g: GameId)
           className="flex shrink-0 items-center gap-2 rounded-lg text-base font-black tracking-tight text-slate-50"
           aria-label="Urna: inicio"
         >
-          <img src={`${import.meta.env.BASE_URL}urna-logo.png`} alt="" className="size-8 rounded-lg bg-white p-0.5" />
+          <img src={`${import.meta.env.BASE_URL}urna-logo.png`} alt="" className="size-8" />
           <span>Urna</span>
         </a>
 
