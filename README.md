@@ -46,7 +46,7 @@ src/
     types.ts            interfaz Politician y vocabularios cerrados (partidos, ministerios…)
     builder.ts          build() y d(): fichas compactas → Politician completo y estricto
     records/*.ts        los políticos, por grupo (presidencia, congreso, mesas, territorial, gabinete, regional)
-    politicians.ts      POLITICIANS (508 políticos), POLITICOS_TABLERO (154) y comprobación de ids únicos
+    politicians.ts      POLITICIANS (507 políticos), POLITICOS_TABLERO (265) y comprobación de ids únicos
     parties.ts          catálogo de partidos: id, nombre oficial, sigla, colores y logo
     partyLogos.ts       GENERADO por `npm run logos` (no editar a mano)
     partyColors.ts      color del partido principal para los bordes de los avatares
@@ -86,7 +86,7 @@ public/
 
 ## Datos
 
-La base tiene **508 políticos**: 154 «de tablero», con ficha completa, y 354 regionales (ver [Fichas regionales](#fichas-regionales)). Las 154 de tablero siguen el esquema multidimensional pedido (identificación, partidos, Congreso, poder territorial, carrera presidencial, ejecutivo/diplomacia/control, décadas e hitos), más `presidente` y `vicepresidente` en la carrera presidencial.
+La base tiene **507 políticos**: las 154 fichas originales, hechas a mano, y 353 fichas agregadas en bloque (ver [Fichas regionales](#fichas-regionales)), de las que 111 también generan tableros. Las 154 originales siguen el esquema multidimensional pedido (identificación, partidos, Congreso, poder territorial, carrera presidencial, ejecutivo/diplomacia/control, décadas e hitos), más `presidente` y `vicepresidente` en la carrera presidencial.
 
 Cobertura de los criterios de nicho (políticos por criterio):
 
@@ -110,7 +110,7 @@ Cómo se compilaron y qué esperar:
 
 ### Fichas regionales
 
-`records/regional.ts` agrega **354 personas** con `perfil_regional: true`:
+`records/regional.ts` agrega **353 personas** (gobernadores, alcaldes de capitales y concejales):
 
 | Cargo | Alcance | Fuente |
 | --- | --- | --- |
@@ -118,12 +118,14 @@ Cómo se compilaron y qué esperar:
 | Alcaldes de capitales | Las 30 capitales con alcalde propio y Bogotá, mismas elecciones | Ídem (en San Andrés el gobernador hace de alcalde) |
 | Concejales | Bogotá 2020–2023 y 2024–2027 · Medellín 2024–2027 · Barranquilla 2020–2023 y 2024–2027 · Cali 2024–2027 | Anexos del Concejo de Bogotá, «Concejo de Medellín», «Concejo de Barranquilla» y elecciones locales de Barranquilla 2023 (Wikipedia); sitio oficial del Concejo de Cali |
 
-Por qué «regionales»: son casi todas figuras poco conocidas fuera de su región. **Valen como respuesta correcta**, salen en el buscador y al final del solucionario, pero **no se usan para generar ni calibrar tableros** (`POLITICOS_TABLERO` las excluye). Así un tablero «Fácil» sigue siendo fácil con políticos conocidos, y las regionales solo suman respuestas aceptadas: unas 21 por tablero fácil, 8 por normal o difícil y casi 2 por leyenda (`npm run validate`).
+**Todos sus cargos.** Además del cargo por el que entraron, cada ficha se completó con la ficha (infobox) de su artículo de Wikipedia (98 personas) y con su perfil en Congreso Visible (Uniandes; 20 personas, aceptado solo si coincide el lugar de algún cargo, la circunscripción o el departamento de nacimiento, para no confundir homónimos). Se cuentan Senado y Cámara (con circunscripción), gobernaciones, alcaldías y concejos de las ciudades del vocabulario, asambleas, ministerios (con el gobierno según la fecha), embajadas y órganos de control, y las décadas de cada cargo. 105 fichas ganaron cargos; por ejemplo, Rodrigo Villalba Mosquera quedó como alcalde de Neiva, representante, ministro de Agricultura de Pastrana, senador y gobernador del Huila. «Guido Echeverry» y «Guido Echeverri» (dos grafías en las tablas) se unieron en una sola ficha.
+
+**Cuáles generan tableros.** Las 111 personas con artículo en Wikipedia o que pasaron por el Congreso o un ministerio entran en `POLITICOS_TABLERO` como cualquier otra ficha. Las 242 restantes (sobre todo concejales sin trayectoria documentada) llevan `perfil_regional: true`: **valen como respuesta correcta**, salen en el buscador y al final del solucionario, pero no generan ni calibran tableros, para que un tablero «Fácil» no dependa de nombres que casi nadie conoce. Aun así suman respuestas aceptadas: unas 18 por tablero fácil, 6–7 por normal o difícil y casi 1 por leyenda (`npm run validate`).
 
 Criterios de rigor:
 
-- **Partido**: solo si la tabla de resultados da un único partido del catálogo; si fue una coalición de varios partidos, queda vacío (no se sabe a cuál pertenece la persona, y no debe activar «Militó en 3 o más partidos»). 222 de 354 tienen partido.
-- **Origen** (lugar de nacimiento): solo si el artículo de Wikipedia de la persona lo da. 87 lo tienen; el resto es `'Sin dato'`.
+- **Partido**: el de la tabla de resultados solo si es un único partido del catálogo (una coalición de varios queda vacía), más los que registran el infobox de Wikipedia o Congreso Visible.
+- **Origen** (lugar de nacimiento): solo si lo da el artículo de Wikipedia o Congreso Visible; si no, `'Sin dato'`.
 - **Género**: del artículo cuando existe; si no, del nombre de pila, con los casos dudosos verificados uno a uno.
 - Dos fichas existentes se completaron: Elsa Noguera (gobernadora del Atlántico 2020–2023) y José Octavio Cardona (alcalde de Manizales 2016–2019).
 - Erratas de Wikipedia corregidas con otra fuente: «Freddy de Jesús Varón Orozco» (Barranquilla 2020–2023) es Barón Orozco, como en la lista de 2024 con votos de la Registraduría.
