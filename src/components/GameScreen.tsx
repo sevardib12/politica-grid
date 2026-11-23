@@ -2,7 +2,6 @@ import {
   ArrowLeft,
   Check,
   Clock,
-  Home,
   Info,
   RotateCcw,
   Share2,
@@ -178,7 +177,7 @@ function ResultPanel({
           onClick={onExit}
           className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white"
         >
-          <Home size={16} aria-hidden="true" /> Volver al inicio
+          <ArrowLeft size={16} aria-hidden="true" /> Cambiar juego
         </button>
       </div>
     </div>
@@ -215,7 +214,7 @@ export function GameScreen({
           onClick={onExit}
           className="inline-flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-sm font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
         >
-          <ArrowLeft size={18} aria-hidden="true" /> Inicio
+          <ArrowLeft size={18} aria-hidden="true" /> Cambiar juego
         </button>
         <div className="flex flex-wrap items-center gap-1.5">
           {config.daily && <Chip tone="gold">Reto diario</Chip>}

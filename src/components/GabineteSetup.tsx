@@ -1,33 +1,25 @@
 import { CalendarDays, ChevronDown, Flame, Play, Trophy } from 'lucide-react'
-import { useState } from 'react'
-import { dateKey, formatDuration } from '../game/stats.ts'
-import { TEMPORIZADOR_LABEL, type Dificultad, type Temporizador } from '../gabinete/engine.ts'
+import { useMemo, useState } from 'react'
+import { poolCompleto } from '../gabinete/pool.ts'
+import { TEMPORIZADOR_LABEL, type Dificultad } from '../gabinete/engine.ts'
 import { rachaDiaria, type StatsGabinete } from '../gabinete/stats.ts'
+import { dateKey, formatDuration } from '../game/stats.ts'
+import type { GabineteSettings } from '../routing/settings.ts'
 import { Segmented } from './ui.tsx'
-
-export interface AjustesGabinete {
-  temporizador: Temporizador
-  dificultad: Dificultad
-}
 
 const DIFICULTAD_LABEL: Record<Dificultad, string> = { normal: 'Normal', dificil: 'Difícil' }
 
-export function GabineteHome({
-  ajustes,
-  onAjustes,
+/** Lo que se despliega en la tarjeta de Arma el Gabinete del menú: reto diario, partida libre y reglas. */
+export function GabineteSetup({
+  settings,
+  onSettings,
   stats,
-  candidatos,
-  conPartido,
-  partidos,
   onPlay,
   onPlayDaily,
 }: {
-  ajustes: AjustesGabinete
-  onAjustes: (a: AjustesGabinete) => void
+  settings: GabineteSettings
+  onSettings: (s: GabineteSettings) => void
   stats: StatsGabinete
-  candidatos: number
-  conPartido: number
-  partidos: number
   onPlay: () => void
   onPlayDaily: () => void
 }) {
@@ -36,31 +28,26 @@ export function GabineteHome({
   const resultadoHoy = stats.diario[hoy]
   const racha = rachaDiaria(stats.diario, hoy)
   const fecha = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })
+  const { candidatos, conPartido, partidos } = useMemo(() => {
+    const pool = poolCompleto()
+    return {
+      candidatos: pool.porId.size,
+      conPartido: new Set([...pool.porPartido.values()].flat().map((p) => p.id)).size,
+      partidos: pool.partidos.length,
+    }
+  }, [])
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 pb-14 pt-6 sm:pt-10">
-      <header className="mb-8">
-        <span className="mb-3 inline-flex size-10 items-center justify-center rounded-xl bg-gold text-ink" aria-hidden="true">
-          <Trophy size={22} />
-        </span>
-        <h1 className="text-4xl font-black tracking-tight text-slate-50 sm:text-5xl">
-          Arma el <span className="text-gold">Gabinete</span>
-        </h1>
-        <p className="mt-2 max-w-lg text-sm text-slate-300 sm:text-base">
-          Gira la ruleta de partidos y nombra a un político de ese partido en una de las 11 sillas del gobierno: presidencia, ministerios
-          y departamentos administrativos.
-        </p>
-      </header>
-
+    <div className="space-y-4">
       <section
         aria-labelledby="diario-gabinete"
-        className="mb-6 overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-br from-gold/10 via-panel to-panel p-5"
+        className="overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-br from-gold/10 via-panel to-panel p-5"
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 id="diario-gabinete" className="flex items-center gap-2 text-lg font-extrabold text-gold">
+            <h3 id="diario-gabinete" className="flex items-center gap-2 text-lg font-extrabold text-gold">
               <CalendarDays size={20} aria-hidden="true" /> Reto diario
-            </h2>
+            </h3>
             <p className="mt-1 text-sm text-slate-300 first-letter:uppercase">{fecha}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -99,15 +86,15 @@ export function GabineteHome({
         </button>
       </section>
 
-      <section aria-labelledby="partida-gabinete" className="rounded-3xl border border-line bg-panel p-5">
-        <h2 id="partida-gabinete" className="mb-4 text-lg font-extrabold text-slate-50">
+      <section aria-labelledby="partida-gabinete" className="rounded-3xl border border-line bg-ink/40 p-5">
+        <h3 id="partida-gabinete" className="mb-4 text-lg font-extrabold text-slate-50">
           Partida libre
-        </h2>
+        </h3>
         <div className="space-y-5">
           <Segmented
             label="Temporizador"
-            value={ajustes.temporizador}
-            onChange={(temporizador) => onAjustes({ ...ajustes, temporizador })}
+            value={settings.temporizador}
+            onChange={(temporizador) => onSettings({ ...settings, temporizador })}
             options={[
               { value: 'cronometro', label: TEMPORIZADOR_LABEL.cronometro, hint: 'cuenta para el récord' },
               { value: 'turno', label: TEMPORIZADOR_LABEL.turno, hint: '15 s para cada giro' },
@@ -116,10 +103,10 @@ export function GabineteHome({
           />
           <Segmented
             label="Dificultad"
-            value={ajustes.dificultad}
-            onChange={(dificultad) => onAjustes({ ...ajustes, dificultad })}
+            value={settings.dificultad}
+            onChange={(dificultad) => onSettings({ ...settings, dificultad })}
             options={[
-              { value: "normal", label: DIFICULTAD_LABEL.normal, hint: "con sugerencias" },
+              { value: 'normal', label: DIFICULTAD_LABEL.normal, hint: 'con sugerencias' },
               { value: 'dificil', label: DIFICULTAD_LABEL.dificil, hint: 'sugerencias desde 3 letras' },
             ]}
           />
@@ -133,7 +120,7 @@ export function GabineteHome({
         </button>
       </section>
 
-      <section className="mt-6 rounded-3xl border border-line bg-panel/60">
+      <section className="rounded-3xl border border-line bg-ink/40">
         <button
           type="button"
           onClick={() => setAyuda((v) => !v)}
@@ -153,27 +140,20 @@ export function GabineteHome({
               Elige a un político del partido sorteado y toca una silla libre. Puedes ponerlo en cualquier silla; el cargo no restringe
               nada.
             </li>
-            <li>
-              Cada silla llena muestra el retrato, el partido con el que fue nombrado y un dato de su trayectoria.
-            </li>
+            <li>Cada silla llena muestra el retrato, el partido con el que fue nombrado y un dato de su trayectoria.</li>
             <li>
               Cuestan un error: nombrar a alguien que no militó en el partido sorteado, repetir a alguien ya nombrado y dejar que se acabe el
               turno de 15 s. Con 3 errores pierdes.
             </li>
-            <li>
-              Tienes 2 comodines de «Re-sortear partido» (cambian el partido sin costar error) y el botón de rendirse.
-            </li>
-            <li>
-              Gana quien llena las 11 sillas. En «Contrarreloj 2 min» pierdes si se acaba el tiempo antes.
-            </li>
+            <li>Tienes 2 comodines de «Re-sortear partido» (cambian el partido sin costar error) y el botón de rendirse.</li>
+            <li>Gana quien llena las 11 sillas. En «Contrarreloj 2 min» pierdes si se acaba el tiempo antes.</li>
           </ul>
         )}
       </section>
 
-      <p className="mt-6 text-center text-xs text-slate-500">
+      <p className="px-1 text-center text-xs text-slate-500">
         Juega toda la base: {candidatos} políticos, de los que {conPartido} salen en la ruleta por sus {partidos} partidos. Quien no tiene
-        foto aparece con sus iniciales. Si ves un
-        dato incorrecto, es un error de la base y no de tu respuesta.
+        foto aparece con sus iniciales. Si ves un dato incorrecto, es un error de la base y no de tu respuesta.
       </p>
     </div>
   )

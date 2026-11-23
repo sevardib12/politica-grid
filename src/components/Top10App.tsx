@@ -1,59 +1,57 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { dateKey } from '../game/stats.ts'
+import { navigate } from '../routing/route.ts'
+import type { Top10Settings } from '../routing/settings.ts'
+import { useStats } from '../stats/useStats.ts'
 import { dailyChallengeId, randomChallengeId } from '../top10/daily.ts'
 import type { Top10Config, Top10State } from '../top10/engine.ts'
-import { loadTop10Stats, recordTop10Game, type Top10Stats } from '../top10/stats.ts'
 import { Top10Game } from './Top10Game.tsx'
-import { Top10Home, type Top10Settings } from './Top10Home.tsx'
 
-type Screen = { name: 'home' } | { name: 'game'; config: Top10Config; id: number }
+interface Run {
+  config: Top10Config
+  id: number
+}
 
-/** Política Top 10: pantalla de inicio y partida. */
-export function Top10App() {
-  const [screen, setScreen] = useState<Screen>({ name: 'home' })
-  const [settings, setSettings] = useState<Top10Settings>({ category: 'aleatoria', mode: 'normal', players: 1 })
-  const [stats, setStats] = useState<Top10Stats>(() => loadTop10Stats())
-  const statsRef = useRef(stats)
+const newRun = (config: Top10Config): Run => ({ config, id: Date.now() })
 
-  const start = useCallback((config: Top10Config) => {
-    setScreen({ name: 'game', config, id: Date.now() })
-  }, [])
+function dailyConfig(): Top10Config {
+  const key = dateKey()
+  return { challengeId: dailyChallengeId(key), mode: 'normal', daily: true, dateKey: key }
+}
 
-  const playDaily = () => {
-    const key = dateKey()
-    start({ challengeId: dailyChallengeId(key), mode: 'normal', daily: true, dateKey: key })
+// El duelo no tiene contrarreloj: siempre es sin límite de tiempo.
+function freeConfig(settings: Top10Settings, avoid?: string): Top10Config {
+  return {
+    challengeId: randomChallengeId(settings.category, avoid),
+    mode: settings.players === 2 ? 'normal' : settings.mode,
+    daily: false,
+    dateKey: null,
+    players: settings.players,
   }
+}
 
-  // El duelo no tiene contrarreloj: siempre es sin límite de tiempo.
-  const playFree = (avoid?: string) =>
-    start({
-      challengeId: randomChallengeId(settings.category, avoid),
-      mode: settings.players === 2 ? 'normal' : settings.mode,
-      daily: false,
-      dateKey: null,
-      players: settings.players,
-    })
+/** Política Top 10: arranca la lista con la configuración de la ruta (el menú elige; una URL directa usa la de por defecto). */
+export function Top10App({ daily, settings }: { daily: boolean; settings: Top10Settings }) {
+  const { recordTop10 } = useStats()
+  const [run, setRun] = useState<Run>(() => newRun(daily ? dailyConfig() : freeConfig(settings)))
 
-  const handleFinish = useCallback((state: Top10State) => {
-    // Los duelos no cuentan en las estadísticas personales: son de dos personas.
-    if (state.duel) return
-    const next = recordTop10Game(statsRef.current, state)
-    statsRef.current = next
-    setStats(next)
-  }, [])
+  const handleFinish = useCallback(
+    (state: Top10State) => {
+      // Los duelos no cuentan en las estadísticas personales: son de dos personas.
+      if (state.duel) return
+      recordTop10(state)
+    },
+    [recordTop10],
+  )
 
-  if (screen.name === 'home') {
-    return <Top10Home settings={settings} onSettings={setSettings} stats={stats} onPlay={() => playFree()} onPlayDaily={playDaily} />
-  }
-
-  const { config } = screen
+  const { config } = run
   return (
     <Top10Game
-      key={screen.id}
+      key={run.id}
       config={config}
       onFinish={handleFinish}
-      onExit={() => setScreen({ name: 'home' })}
-      onPlayAgain={() => (config.daily ? start(config) : playFree(config.challengeId))}
+      onExit={() => navigate({ page: 'menu' })}
+      onPlayAgain={() => setRun(newRun(config.daily ? config : freeConfig(settings, config.challengeId)))}
     />
   )
 }

@@ -321,7 +321,7 @@ function Resultado({
           onClick={onExit}
           className="inline-flex items-center gap-2 rounded-2xl border border-line bg-ink/60 px-4 py-2.5 text-sm font-bold text-slate-100 transition hover:border-cyan hover:text-cyan"
         >
-          <ArrowLeft size={16} aria-hidden="true" /> Inicio
+          <ArrowLeft size={16} aria-hidden="true" /> Cambiar juego
         </button>
       </div>
 
@@ -412,7 +412,7 @@ export function GabineteGame({
           onClick={onExit}
           className="inline-flex items-center gap-1.5 rounded-xl border border-line bg-panel px-3 py-1.5 text-sm font-semibold text-slate-200 transition hover:border-cyan hover:text-cyan"
         >
-          <ArrowLeft size={16} aria-hidden="true" /> Salir
+          <ArrowLeft size={16} aria-hidden="true" /> Cambiar juego
         </button>
         <div className="flex flex-wrap items-center justify-end gap-1.5">
           {config.daily ? <Chip tone="gold">Reto diario</Chip> : <Chip tone="cyan">Partida libre</Chip>}

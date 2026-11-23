@@ -58,6 +58,13 @@ export function guardarStats(stats: StatsGabinete): void {
   }
 }
 
+/** Borra todo lo guardado de «Arma el Gabinete» y devuelve las estadísticas vacías. */
+export function borrarStats(): StatsGabinete {
+  const vacias = statsVacias()
+  guardarStats(vacias)
+  return vacias
+}
+
 /** Días seguidos con el reto diario ganado, contando hasta hoy (o desde ayer si hoy aún no se juega). */
 export function rachaDiaria(diario: Record<string, { ganada: boolean }>, hoy: string): number {
   let cursor = diario[hoy]?.ganada ? hoy : shiftDay(hoy, -1)

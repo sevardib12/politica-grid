@@ -1,17 +1,12 @@
-import { CalendarDays, ChevronDown, Flame, ListOrdered, Play } from 'lucide-react'
+import { CalendarDays, ChevronDown, Flame, Play } from 'lucide-react'
 import { useState } from 'react'
 import { TOP10_BY_ID, TOP10_CATEGORY_LABEL, TOP10_LISTS, type Top10Category } from '../data/top10Lists.ts'
 import { currentStreak, dateKey } from '../game/stats.ts'
+import type { Top10Settings } from '../routing/settings.ts'
 import { dailyChallengeId, type CategoryChoice } from '../top10/daily.ts'
-import { MAX_LIVES, MODE_LABEL, TIMED_SECONDS, type Top10Mode, type Top10Players } from '../top10/engine.ts'
+import { MAX_LIVES, MODE_LABEL, TIMED_SECONDS } from '../top10/engine.ts'
 import type { Top10Stats } from '../top10/stats.ts'
 import { Chip, Segmented } from './ui.tsx'
-
-export interface Top10Settings {
-  category: CategoryChoice
-  mode: Top10Mode
-  players: Top10Players
-}
 
 const CATEGORIES: Top10Category[] = ['cargos', 'congreso', 'alcaldias', 'presidenciales']
 
@@ -26,7 +21,8 @@ function countIn(category: CategoryChoice): number {
   return category === 'aleatoria' ? TOP10_LISTS.length : TOP10_LISTS.filter((l) => l.categoria === category).length
 }
 
-export function Top10Home({
+/** Lo que se despliega en la tarjeta de Política Top 10 del menú: reto diario, partida libre y reglas. */
+export function Top10Setup({
   settings,
   onSettings,
   stats,
@@ -45,32 +41,18 @@ export function Top10Home({
   const streak = currentStreak(stats.daily)
   const daily = TOP10_BY_ID.get(dailyChallengeId(today))
   const dateLabel = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })
-  const accuracy = stats.itemsTotal > 0 ? Math.round((stats.itemsFound / stats.itemsTotal) * 100) : null
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 pb-14 pt-6 sm:pt-10">
-      <header className="mb-8">
-        <span className="mb-3 inline-flex size-10 items-center justify-center rounded-xl bg-gold text-ink" aria-hidden="true">
-          <ListOrdered size={22} />
-        </span>
-        <h1 className="text-4xl font-black tracking-tight text-slate-50 sm:text-5xl">
-          Política <span className="text-gold">Top 10</span>
-        </h1>
-        <p className="mt-2 max-w-lg text-sm text-slate-300 sm:text-base">
-          Adivina las 10 (o 5) respuestas de una lista de la política colombiana: los últimos presidentes, los más votados, los ministros…
-          Cada fila trae una pista; tienes {MAX_LIVES} fallos.
-        </p>
-      </header>
-
+    <div className="space-y-4">
       <section
         aria-labelledby="diario-top10"
-        className="mb-6 overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-br from-gold/10 via-panel to-panel p-5"
+        className="overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-br from-gold/10 via-panel to-panel p-5"
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 id="diario-top10" className="flex items-center gap-2 text-lg font-extrabold text-gold">
+            <h3 id="diario-top10" className="flex items-center gap-2 text-lg font-extrabold text-gold">
               <CalendarDays size={20} aria-hidden="true" /> Reto Diario Top 10
-            </h2>
+            </h3>
             <p className="mt-1 text-sm text-slate-300 first-letter:uppercase">{dateLabel}</p>
           </div>
           <div
@@ -111,10 +93,10 @@ export function Top10Home({
         </button>
       </section>
 
-      <section aria-labelledby="partida-top10" className="rounded-3xl border border-line bg-panel p-5">
-        <h2 id="partida-top10" className="mb-4 text-lg font-extrabold text-slate-50">
+      <section aria-labelledby="partida-top10" className="rounded-3xl border border-line bg-ink/40 p-5">
+        <h3 id="partida-top10" className="mb-4 text-lg font-extrabold text-slate-50">
           Partida libre
-        </h2>
+        </h3>
 
         <div className="space-y-5">
           <fieldset>
@@ -177,23 +159,7 @@ export function Top10Home({
         </button>
       </section>
 
-      {stats.played > 0 && (
-        <section aria-label="Tus estadísticas" className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {[
-            ['Partidas', String(stats.played)],
-            ['Listas completas', String(stats.won)],
-            ['Aciertos', accuracy === null ? '—' : `${stats.itemsFound} (${accuracy} %)`],
-            ['Mejor racha', String(stats.maxStreak)],
-          ].map(([label, value]) => (
-            <div key={label} className="rounded-2xl border border-line bg-panel/60 px-3 py-2.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{label}</p>
-              <p className="mt-0.5 text-lg font-black text-slate-50">{value}</p>
-            </div>
-          ))}
-        </section>
-      )}
-
-      <section className="mt-6 rounded-3xl border border-line bg-panel/60">
+      <section className="rounded-3xl border border-line bg-ink/40">
         <button
           type="button"
           onClick={() => setHelp((v) => !v)}
@@ -216,7 +182,7 @@ export function Top10Home({
         )}
       </section>
 
-      <p className="mt-6 text-center text-xs text-slate-500">
+      <p className="px-1 text-center text-xs text-slate-500">
         {TOP10_LISTS.length} listas verificadas con Wikipedia y prensa. Si ves un dato incorrecto, es un error de la base y no de tu respuesta.
       </p>
     </div>

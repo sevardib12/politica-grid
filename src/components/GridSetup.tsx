@@ -1,35 +1,28 @@
-import { BarChart3, CalendarDays, ChevronDown, Flame, Play } from 'lucide-react'
+import { CalendarDays, ChevronDown, Flame, Play } from 'lucide-react'
 import { useState } from 'react'
-import type { Mode, TimerSeconds } from '../game/engine.ts'
-import { currentStreak, dailyDifficulty, dateKey, formatDuration, type Stats } from '../game/stats.ts'
-import { DIFFICULTIES, type Difficulty } from '../utils/gridGenerator.ts'
 import { POLITICIANS } from '../data/politicians.ts'
+import { currentStreak, dailyDifficulty, dateKey, formatDuration, type Stats } from '../game/stats.ts'
+import type { GridSettings } from '../routing/settings.ts'
+import { DIFFICULTIES } from '../utils/gridGenerator.ts'
 import { DIFFICULTY_HINT, DIFFICULTY_LABEL } from './labels.ts'
 import { Segmented } from './ui.tsx'
-
-export interface Settings {
-  mode: Mode
-  timer: TimerSeconds
-  difficulty: Difficulty
-}
 
 const MODE_TEXT =
   'Las 9 casillas están abiertas. Toca una, busca al político por nombre y acierta con 9 intentos en total.'
 
-export function HomeScreen({
+/** Lo que se despliega en la tarjeta de Política Grid del menú: reto diario, partida libre y reglas. */
+export function GridSetup({
   settings,
   onSettings,
   stats,
   onPlay,
   onPlayDaily,
-  onOpenStats,
 }: {
-  settings: Settings
-  onSettings: (s: Settings) => void
+  settings: GridSettings
+  onSettings: (s: GridSettings) => void
   stats: Stats
   onPlay: () => void
   onPlayDaily: () => void
-  onOpenStats: () => void
 }) {
   const [help, setHelp] = useState(false)
   const today = dateKey()
@@ -39,41 +32,16 @@ export function HomeScreen({
   const dateLabel = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 pb-14 pt-6 sm:pt-10">
-      <header className="mb-8 flex items-start justify-between gap-4">
-        <div>
-          <div className="mb-3 inline-grid grid-cols-3 gap-1" aria-hidden="true">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <span key={i} className={`size-3.5 rounded-[5px] ${i === 4 ? 'bg-gold' : 'bg-cyan/70'}`} />
-            ))}
-          </div>
-          <h1 className="text-4xl font-black tracking-tight text-slate-50 sm:text-5xl">
-            Política <span className="text-gold">Grid</span>
-          </h1>
-          <p className="mt-2 max-w-md text-sm text-slate-300 sm:text-base">
-            Completa la cuadrícula cruzando cargos, partidos y épocas de la política colombiana, de los años 80 a 2026.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={onOpenStats}
-          aria-label="Estadísticas"
-          className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-line bg-panel px-3 py-2 text-sm font-semibold text-slate-200 transition hover:border-cyan hover:text-cyan"
-        >
-          <BarChart3 size={18} aria-hidden="true" />
-          <span className="hidden sm:inline">Estadísticas</span>
-        </button>
-      </header>
-
+    <div className="space-y-4">
       <section
         aria-labelledby="diario"
-        className="mb-6 overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-br from-gold/10 via-panel to-panel p-5"
+        className="overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-br from-gold/10 via-panel to-panel p-5"
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 id="diario" className="flex items-center gap-2 text-lg font-extrabold text-gold">
+            <h3 id="diario" className="flex items-center gap-2 text-lg font-extrabold text-gold">
               <CalendarDays size={20} aria-hidden="true" /> Reto diario
-            </h2>
+            </h3>
             <p className="mt-1 text-sm text-slate-300 first-letter:uppercase">
               {dateLabel} · {DIFFICULTY_LABEL[dailyLevel]}
             </p>
@@ -102,10 +70,10 @@ export function HomeScreen({
         </button>
       </section>
 
-      <section aria-labelledby="partida" className="rounded-3xl border border-line bg-panel p-5">
-        <h2 id="partida" className="mb-4 text-lg font-extrabold text-slate-50">
+      <section aria-labelledby="partida" className="rounded-3xl border border-line bg-ink/40 p-5">
+        <h3 id="partida" className="mb-4 text-lg font-extrabold text-slate-50">
           Partida libre
-        </h2>
+        </h3>
 
         <div className="space-y-5">
           <p className="-mb-1 text-sm leading-relaxed text-slate-300">{MODE_TEXT}</p>
@@ -140,7 +108,7 @@ export function HomeScreen({
         </button>
       </section>
 
-      <section className="mt-6 rounded-3xl border border-line bg-panel/60">
+      <section className="rounded-3xl border border-line bg-ink/40">
         <button
           type="button"
           onClick={() => setHelp((v) => !v)}
@@ -163,7 +131,7 @@ export function HomeScreen({
         )}
       </section>
 
-      <p className="mt-6 text-center text-xs text-slate-500">
+      <p className="px-1 text-center text-xs text-slate-500">
         {POLITICIANS.length} políticos en la base de datos. Hecha para jugar y aprender: si ves un dato incorrecto, es un error de la
         base y no de tu respuesta.
       </p>

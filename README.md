@@ -1,6 +1,6 @@
 # Urna
 
-Urna reúne tres juegos de trivia sobre la política colombiana en una sola aplicación, con una barra superior para alternar entre ellos (la ruta vive en el hash: `#/grid`, `#/top10` y `#/gabinete`). El logo está en `public/urna-logo.png`; los íconos de la app (`public/icons/`) y el favicon (`public/favicon.png`) se generaron de ese mismo archivo, sobre fondo blanco.
+Urna reúne tres juegos de trivia sobre la política colombiana en una sola aplicación. La página principal (`#/`) es un menú tipo acordeón: una tarjeta por juego (solo una abierta a la vez) con su reto diario, su partida libre y sus reglas. La barra superior solo trae el logo con «Urna» (vuelve al menú) y el botón de Estadísticas, que abre las de los tres juegos desde cualquier pantalla. El logo está en `public/urna-logo.png`; los íconos de la app (`public/icons/`) y el favicon (`public/favicon.png`) se generaron de ese mismo archivo, sobre fondo blanco.
 
 - **Política Grid**: cuadrícula 3×3 de los años 80 a 2026, inspirada en *Futbol 11 Grid* e *Immaculate Grid*.
 - **Política Top 10**: listas de 10 o 5 filas (los últimos presidentes, los más votados, los ministros…), inspirada en *Futbol 11 Top 10* / *Football Tenable*. Ver [Política Top 10](#política-top-10).
@@ -25,6 +25,19 @@ npm run logos      # descarga logos de partidos a public/parties/
 npm run congreso   # baja de Congreso Visible los listados y perfiles de congresistas (scripts/.cache/cv/)
 npm run congreso:generar  # cruza esos perfiles con la base y reescribe records/congresistas.ts
 ```
+
+## Rutas
+
+La ruta vive en el hash, sin servidor ni router (`src/routing/route.ts`). El menú arma la URL con lo que elijas y el juego arranca la partida directamente; una URL escrita a mano funciona igual.
+
+| Ruta | Parámetros (todos opcionales) |
+| --- | --- |
+| `#/` | Menú principal. Cualquier ruta desconocida también lleva aquí. |
+| `#/grid` | `reto=diario` · `tiempo=0\|90\|60\|40` (segundos por turno) · `dificultad=easy\|normal\|hard\|legend` (sin efecto en el reto diario, que fija la suya cada día) |
+| `#/top10` | `reto=diario` · `categoria=aleatoria\|cargos\|congreso\|alcaldias\|presidenciales` · `modo=normal\|contrarreloj` · `jugadores=1\|2` |
+| `#/gabinete` | `reto=diario` · `temporizador=cronometro\|turno\|contrarreloj` · `dificultad=normal\|dificil` |
+
+Un parámetro ausente o inválido se reemplaza por el valor por defecto (`DEFAULT_SETTINGS`: Grid sin tiempo y Normal; Top 10 aleatoria, normal, un jugador; Gabinete con cronómetro y Normal), así que `#/grid` a secas abre una partida libre. Dentro de una partida, «← Cambiar juego» vuelve al menú.
 
 ## Política Grid: cómo se juega
 
@@ -70,7 +83,11 @@ src/
     engine.ts           reducer puro de Búsqueda libre
     useGame.ts          hook (temporizador, ubicación automática, avisos)
     stats.ts, share.ts  estadísticas, racha diaria, texto compartible
-  components/           pantallas y piezas de interfaz
+  routing/
+    route.ts            ruta en el hash: parseHash, routeHash, navigate y useRoute
+    settings.ts         ajustes de partida libre de cada juego y sus valores por defecto
+  stats/                estadísticas de los tres juegos compartidas por todas las pantallas (StatsProvider, useStats)
+  components/           pantallas y piezas de interfaz (MenuScreen y GameCard: el menú; *Setup: lo que se despliega en cada tarjeta)
 scripts/
   validate.ts           comprueba la base de datos y 300 tableros por dificultad
   simulate.ts           simula partidas completas contra el motor
@@ -244,7 +261,7 @@ Para agregar una lista, escribe una entrada con `lista({...})` en el archivo de 
 
 ## Arma el Gabinete
 
-Tercer juego del hub (ruta `#/gabinete`). Hay que llenar las 11 sillas del gobierno (presidencia, vicepresidencia, cinco ministerios y cuatro departamentos administrativos) con políticos de los partidos que sortea una ruleta. Cualquier político del partido sorteado puede ir en cualquier silla: el cargo no restringe nada.
+Tercer juego de Urna (ruta `#/gabinete`). Hay que llenar las 11 sillas del gobierno (presidencia, vicepresidencia, cinco ministerios y cuatro departamentos administrativos) con políticos de los partidos que sortea una ruleta. Cualquier político del partido sorteado puede ir en cualquier silla: el cargo no restringe nada.
 
 | Opción | Valores |
 | --- | --- |

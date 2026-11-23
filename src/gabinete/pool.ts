@@ -32,6 +32,14 @@ export function buildPool(fuente: readonly Politician[] = POLITICIANS): Pool {
   return { porId, porPartido, partidos }
 }
 
+let completo: Pool | undefined
+
+/** El pool de toda la base, construido una sola vez: lo comparten el menú (para sus cifras) y la partida. */
+export function poolCompleto(): Pool {
+  completo ??= buildPool()
+  return completo
+}
+
 /** Texto de búsqueda sin tildes ni guiones, en minúsculas. */
 export function claveBusqueda(s: string): string {
   return s
