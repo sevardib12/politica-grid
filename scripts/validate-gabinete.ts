@@ -31,7 +31,9 @@ comprobar('Todo político con partido sale en el sorteo de cada uno de sus parti
 const sinArchivo = [...pool.porId.values()].filter((p) => p.foto_url && !existsSync(path.join(ROOT, 'public', p.foto_url)))
 comprobar('Toda foto registrada existe en public/ (sin foto, la silla muestra iniciales)', sinArchivo.length === 0, sinArchivo.map((p) => p.id).slice(0, 5).join(', '))
 comprobar('Hay candidatos para al menos 8 partidos', pool.partidos.length >= 8, `${pool.partidos.length}`)
-comprobar('Cada silla tiene un cargo distinto', new Set(SILLAS.map((s) => s.id)).size === 11)
+comprobar('Cada silla tiene un cargo distinto', new Set(SILLAS.map((s) => s.id)).size === SILLAS.length && new Set(SILLAS.map((s) => s.cargo)).size === SILLAS.length)
+comprobar('Están los 18 ministerios en funcionamiento (sin el de Igualdad, en liquidación)', SILLAS.filter((s) => s.nivel === 2).length === 18, `${SILLAS.filter((s) => s.nivel === 2).length}`)
+comprobar('El organigrama tiene 24 sillas: 2 de cúpula, 18 ministerios y 4 departamentos', SILLAS.length === 24 && SILLAS.filter((s) => s.nivel === 1).length === 2 && SILLAS.filter((s) => s.nivel === 3).length === 4, `${SILLAS.length}`)
 
 // ── 2. Sorteo ponderado ───────────────────────────────────────────────────
 {
@@ -74,7 +76,7 @@ function jugarRobot(config: ConfigGabinete, seed: number): EstadoGabinete {
   const ctx = ctxCon(seed)
   let estado = iniciarGabinete(config, ctx, 0)
   let t = 0
-  for (let paso = 0; paso < 400 && estado.estado === 'jugando'; paso++) {
+  for (let paso = 0; paso < 1000 && estado.estado === 'jugando'; paso++) {
     t += 1000
     if (!estado.partido) break
     const libres = disponiblesDelPartido(estado, ctx)
@@ -98,7 +100,7 @@ function jugarRobot(config: ConfigGabinete, seed: number): EstadoGabinete {
     if (e.estado === 'ganada') ganadas++
     erroresTotales += e.errores
   }
-  comprobar('El robot llena las 11 sillas en casi todas las partidas', ganadas >= partidas * 0.95, `${ganadas}/${partidas}`)
+  comprobar(`El robot llena las ${SILLAS.length} sillas en casi todas las partidas`, ganadas >= partidas * 0.95, `${ganadas}/${partidas}`)
   comprobar('El robot que solo elige miembros del partido no comete errores', erroresTotales === 0, `${erroresTotales} errores`)
   const d1 = jugarRobot(cfg({ daily: true, dateKey: '2026-11-18' }), 3)
   const d2 = jugarRobot(cfg({ daily: true, dateKey: '2026-11-18' }), 99)
@@ -166,7 +168,8 @@ function jugarRobot(config: ConfigGabinete, seed: number): EstadoGabinete {
   comprobar('Tres turnos vencidos terminan la partida', e.estado === 'perdida' && e.errores === 3, e.motivo?.detalle)
   const c = iniciarGabinete(cfg({ temporizador: 'contrarreloj' }), ctx, 0)
   const f = reducirGabinete(c, { type: 'TICK', now: MS_CONTRARRELOJ }, ctx)
-  comprobar('Contrarreloj: a los 2 min se pierde por tiempo', f.estado === 'perdida' && f.motivo?.kind === 'tiempo')
+  comprobar('Contrarreloj: al cumplirse el tiempo se pierde', f.estado === 'perdida' && f.motivo?.kind === 'tiempo' && MS_CONTRARRELOJ >= SILLAS.length * 10_000, `${MS_CONTRARRELOJ / 1000} s para ${SILLAS.length} sillas`)
+  comprobar('Contrarreloj: un instante antes del tiempo la partida sigue', reducirGabinete(c, { type: 'TICK', now: MS_CONTRARRELOJ - 1 }, ctx).estado === 'jugando')
   const g = iniciarGabinete(cfg({ temporizador: 'cronometro' }), ctx, 0)
   comprobar('Sin tiempo: el reloj no termina la partida', reducirGabinete(g, { type: 'TICK', now: 9 * MS_CONTRARRELOJ }, ctx).estado === 'jugando')
   const rend = reducirGabinete(g, { type: 'RENDIRSE', now: 4000 }, ctx)

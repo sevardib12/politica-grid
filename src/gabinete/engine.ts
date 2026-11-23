@@ -9,8 +9,8 @@ import { secuenciaDiaria } from './daily.ts'
 
 /** Segundos por turno en el modo «15 s por turno». */
 export const SEGUNDOS_TURNO = 15
-/** Duración del modo «Contrarreloj 2 min», en milisegundos. */
-export const MS_CONTRARRELOJ = 120_000
+/** Duración del modo «Contrarreloj», en milisegundos: unos 12 s por silla, como los 2 min que había con 11 sillas. */
+export const MS_CONTRARRELOJ = 300_000
 /** Comodines de «Re-sortear partido» por partida. */
 export const RESORTEOS = 2
 /** Errores que terminan la partida. */
@@ -24,7 +24,7 @@ export type Estado = 'jugando' | 'ganada' | 'perdida'
 export const TEMPORIZADOR_LABEL: Record<Temporizador, string> = {
   cronometro: 'Sin tiempo',
   turno: '15 s por turno',
-  contrarreloj: 'Contrarreloj 2 min',
+  contrarreloj: `Contrarreloj ${MS_CONTRARRELOJ / 60_000} min`,
 }
 
 export interface ConfigGabinete {
@@ -252,7 +252,7 @@ export function reducirGabinete(estado: EstadoGabinete, accion: AccionGabinete, 
           ...estado,
           estado: 'perdida',
           fin: accion.now,
-          motivo: { kind: 'tiempo', detalle: 'Se acabaron los 2 minutos antes de llenar el gabinete.' },
+          motivo: { kind: 'tiempo', detalle: `Se acabaron los ${MS_CONTRARRELOJ / 60_000} minutos antes de llenar el gabinete.` },
           retro: null,
         }
       }

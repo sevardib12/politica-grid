@@ -2,6 +2,7 @@ import { CalendarDays, ChevronDown, Flame, Play, Trophy } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { poolCompleto } from '../gabinete/pool.ts'
 import { TEMPORIZADOR_LABEL, type Dificultad } from '../gabinete/engine.ts'
+import { TOTAL_SILLAS } from '../gabinete/posts.ts'
 import { rachaDiaria, type StatsGabinete } from '../gabinete/stats.ts'
 import { dateKey, formatDuration } from '../game/stats.ts'
 import type { GabineteSettings } from '../routing/settings.ts'
@@ -70,7 +71,7 @@ export function GabineteSetup({
           <p className="mt-3 rounded-xl bg-ink/50 px-3 py-2 text-sm text-slate-200">
             {resultadoHoy.ganada
               ? `Hoy lo armaste en ${formatDuration(resultadoHoy.ms)}.`
-              : `Hoy llenaste ${resultadoHoy.llenas}/11 sillas.`}{' '}
+              : `Hoy llenaste ${resultadoHoy.llenas}/${TOTAL_SILLAS} sillas.`}{' '}
             Puedes repetirlo, pero solo cuenta el primer intento.
           </p>
         ) : (
@@ -146,7 +147,10 @@ export function GabineteSetup({
               turno de 15 s. Con 3 errores pierdes.
             </li>
             <li>Tienes 2 comodines de «Re-sortear partido» (cambian el partido sin costar error) y el botón de rendirse.</li>
-            <li>Gana quien llena las 11 sillas. En «Contrarreloj 2 min» pierdes si se acaba el tiempo antes.</li>
+            <li>
+              Gana quien llena las {TOTAL_SILLAS} sillas: presidencia, vicepresidencia y los 18 ministerios, más cuatro departamentos. En «
+              {TEMPORIZADOR_LABEL.contrarreloj}» pierdes si se acaba el tiempo antes.
+            </li>
           </ul>
         )}
       </section>

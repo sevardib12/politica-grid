@@ -16,7 +16,7 @@ import { Ruleta } from './Ruleta.tsx'
 import { Chip } from './ui.tsx'
 
 const CONFIRMAR_MS = 4000
-const NIVEL_LABEL: Record<1 | 2 | 3, string> = { 1: 'Cúpula', 2: 'Ministerios clave', 3: 'Departamentos administrativos' }
+const NIVEL_LABEL: Record<1 | 2 | 3, string> = { 1: 'Cúpula', 2: 'Ministerios', 3: 'Departamentos administrativos' }
 
 /** Retrato de una silla: foto real con `object-cover object-top`; si falla, las iniciales. */
 function Retrato({ politico }: { politico: Politician }) {
@@ -154,7 +154,7 @@ function SillaCard({
           </span>
         </div>
         <div className="p-2">
-          <p className="line-clamp-2 text-[10px] font-bold uppercase leading-tight tracking-wide text-cyan">{silla.cargo}</p>
+          <p className="line-clamp-3 text-[10px] font-bold uppercase leading-tight tracking-wide text-cyan">{silla.cargo}</p>
           <p className="mt-0.5 text-xs font-extrabold leading-tight text-slate-50">{politico.nombre}</p>
           <p className="mt-0.5 line-clamp-2 text-[10px] leading-snug text-slate-400">{datoBreve(politico)}</p>
         </div>
@@ -199,7 +199,7 @@ function Organigrama({
           nivel === 1
             ? 'mx-auto grid max-w-xs grid-cols-2 gap-2 sm:max-w-sm sm:gap-3'
             : nivel === 2
-              ? 'grid grid-cols-3 gap-2 sm:grid-cols-5'
+              ? 'grid grid-cols-3 gap-2 sm:grid-cols-6'
               : 'grid grid-cols-2 gap-2 sm:grid-cols-4'
         return (
           <section key={nivel} aria-label={NIVEL_LABEL[nivel]}>
@@ -263,7 +263,7 @@ function Resultado({
           <p className="text-lg font-black text-slate-50">
             {ganada ? `Gabinete armado en ${formatDuration(ms)}` : `Partida perdida: ${estado.sillas.filter((s) => s !== null).length}/${TOTAL_SILLAS} sillas`}
           </p>
-          <p className="text-sm text-slate-300">{ganada ? 'Las 11 sillas están llenas.' : estado.motivo?.detalle}</p>
+          <p className="text-sm text-slate-300">{ganada ? `Las ${TOTAL_SILLAS} sillas están llenas.` : estado.motivo?.detalle}</p>
         </div>
       </div>
 

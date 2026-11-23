@@ -1,4 +1,11 @@
-/** Los 11 cargos del organigrama, en tres niveles. Cualquier político del partido sorteado puede ocupar cualquiera. */
+/**
+ * Las 24 sillas del organigrama, en tres niveles: la cúpula, los 18 ministerios en funcionamiento y cuatro
+ * departamentos administrativos. Cualquier político del partido sorteado puede ocupar cualquiera.
+ *
+ * Los ministerios van en el orden de precedencia (el de la creación de cada cartera). El de Igualdad y
+ * Equidad no está: la Corte Constitucional tumbó su ley de creación y el Decreto 0626 de 2026 lo puso en
+ * liquidación desde junio de 2026.
+ */
 export interface Silla {
   id: string
   nivel: 1 | 2 | 3
@@ -9,10 +16,23 @@ export const SILLAS: readonly Silla[] = [
   { id: 'presidente', nivel: 1, cargo: 'Presidente de la República' },
   { id: 'vicepresidente', nivel: 1, cargo: 'Vicepresidente de la República' },
   { id: 'interior', nivel: 2, cargo: 'Ministro/a del Interior' },
-  { id: 'hacienda', nivel: 2, cargo: 'Ministro/a de Hacienda' },
-  { id: 'defensa', nivel: 2, cargo: 'Ministro/a de Defensa' },
   { id: 'canciller', nivel: 2, cargo: 'Canciller (Relaciones Exteriores)' },
+  { id: 'hacienda', nivel: 2, cargo: 'Ministro/a de Hacienda' },
+  { id: 'justicia', nivel: 2, cargo: 'Ministro/a de Justicia' },
+  { id: 'defensa', nivel: 2, cargo: 'Ministro/a de Defensa' },
+  { id: 'agricultura', nivel: 2, cargo: 'Ministro/a de Agricultura' },
   { id: 'salud', nivel: 2, cargo: 'Ministro/a de Salud' },
+  { id: 'trabajo', nivel: 2, cargo: 'Ministro/a de Trabajo' },
+  { id: 'minas', nivel: 2, cargo: 'Ministro/a de Minas y Energía' },
+  { id: 'comercio', nivel: 2, cargo: 'Ministro/a de Comercio' },
+  { id: 'educacion', nivel: 2, cargo: 'Ministro/a de Educación' },
+  { id: 'ambiente', nivel: 2, cargo: 'Ministro/a de Ambiente' },
+  { id: 'vivienda', nivel: 2, cargo: 'Ministro/a de Vivienda' },
+  { id: 'tic', nivel: 2, cargo: 'Ministro/a de las TIC' },
+  { id: 'transporte', nivel: 2, cargo: 'Ministro/a de Transporte' },
+  { id: 'cultura', nivel: 2, cargo: 'Ministro/a de Cultura' },
+  { id: 'deporte', nivel: 2, cargo: 'Ministro/a del Deporte' },
+  { id: 'ciencia', nivel: 2, cargo: 'Ministro/a de Ciencia' },
   { id: 'dapre', nivel: 3, cargo: 'Director/a del DAPRE' },
   { id: 'dnp', nivel: 3, cargo: 'Director/a del DNP' },
   { id: 'dane', nivel: 3, cargo: 'Director/a del DANE' },

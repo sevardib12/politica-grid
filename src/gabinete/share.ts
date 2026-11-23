@@ -2,6 +2,9 @@ import { formatDuration } from '../game/stats.ts'
 import { SILLAS } from './posts.ts'
 import type { EstadoGabinete } from './engine.ts'
 
+/** Cuadrados por fila: los 18 ministerios salen en tres filas de seis. */
+const POR_FILA = 6
+
 /** Texto del reto diario para compartir, con una cuadrícula por niveles del organigrama. */
 export function textoCompartir(estado: EstadoGabinete, fechaLegible: string): string {
   const llenas = estado.sillas.filter((s) => s !== null).length
@@ -9,7 +12,7 @@ export function textoCompartir(estado: EstadoGabinete, fechaLegible: string): st
   const filas: string[] = []
   for (const nivel of [1, 2, 3] as const) {
     const idx = SILLAS.map((s, i) => (s.nivel === nivel ? i : -1)).filter((i) => i >= 0)
-    filas.push(idx.map(cuadro).join(''))
+    for (let i = 0; i < idx.length; i += POR_FILA) filas.push(idx.slice(i, i + POR_FILA).map(cuadro).join(''))
   }
   const cabecera =
     estado.estado === 'ganada'

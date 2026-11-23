@@ -2,7 +2,7 @@ import type { Partido } from '../data/types.ts'
 import { mulberry32, semillaDeFecha } from '../utils/cabinetRandomizer.ts'
 import type { Pool } from './pool.ts'
 
-/** Entradas de la secuencia del día: de sobra para cualquier partida (11 ubicaciones y 2 re-sorteos). */
+/** Entradas de la secuencia del día: de sobra para cualquier partida (una por silla, más los re-sorteos y los turnos vencidos). */
 export const LARGO_SECUENCIA = 200
 
 /**

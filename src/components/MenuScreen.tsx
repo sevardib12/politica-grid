@@ -1,6 +1,7 @@
 import { Landmark, LayoutGrid, ListOrdered } from 'lucide-react'
 import { useState } from 'react'
 import { POLITICIANS } from '../data/politicians.ts'
+import { TOTAL_SILLAS } from '../gabinete/posts.ts'
 import { dateKey } from '../game/stats.ts'
 import { navigate, type GameId } from '../routing/route.ts'
 import type { AllSettings } from '../routing/settings.ts'
@@ -88,7 +89,7 @@ export function MenuScreen({
               Arma el <span className="text-gold">Gabinete</span>
             </>
           }
-          description="Gira la ruleta y llena las 11 sillas del gobierno."
+          description={`Gira la ruleta y llena las ${TOTAL_SILLAS} sillas del gobierno.`}
           dailyDone={Boolean(stats.gabinete.diario[hoy])}
           open={open === 'gabinete'}
           onToggle={() => toggle('gabinete')}

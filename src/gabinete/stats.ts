@@ -4,7 +4,8 @@ import type { EstadoGabinete, Temporizador } from './engine.ts'
 // Estadísticas de «Arma el Gabinete» en localStorage. Toda lectura y escritura va en try/catch: si el
 // almacenamiento está bloqueado, el juego sigue funcionando sin guardar nada.
 
-const KEY = 'politica-gabinete:v1'
+// v2: con 24 sillas (antes 11) los tiempos y las sillas llenas de la v1 ya no son comparables; la v1 queda sin leer.
+const KEY = 'politica-gabinete:v2'
 
 export interface ResultadoDiario {
   ganada: boolean

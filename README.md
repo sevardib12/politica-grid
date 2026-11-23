@@ -4,7 +4,7 @@ Urna reúne tres juegos de trivia sobre la política colombiana en una sola apli
 
 - **Política Grid**: cuadrícula 3×3 de los años 80 a 2026, inspirada en *Futbol 11 Grid* e *Immaculate Grid*.
 - **Política Top 10**: listas de 10 o 5 filas (los últimos presidentes, los más votados, los ministros…), inspirada en *Futbol 11 Top 10* / *Football Tenable*. Ver [Política Top 10](#política-top-10).
-- **Arma el Gabinete**: llenar las 11 sillas del gobierno con políticos de los partidos que sortea una ruleta. Ver [Arma el Gabinete](#arma-el-gabinete).
+- **Arma el Gabinete**: llenar las 24 sillas del gobierno (con los 18 ministerios) con políticos de los partidos que sortea una ruleta. Ver [Arma el Gabinete](#arma-el-gabinete).
 
 Todo corre en el cliente: sin backend, con estadísticas y racha diaria en `localStorage`.
 
@@ -261,12 +261,12 @@ Para agregar una lista, escribe una entrada con `lista({...})` en el archivo de 
 
 ## Arma el Gabinete
 
-Tercer juego de Urna (ruta `#/gabinete`). Hay que llenar las 11 sillas del gobierno (presidencia, vicepresidencia, cinco ministerios y cuatro departamentos administrativos) con políticos de los partidos que sortea una ruleta. Cualquier político del partido sorteado puede ir en cualquier silla: el cargo no restringe nada.
+Tercer juego de Urna (ruta `#/gabinete`). Hay que llenar las 24 sillas del gobierno (presidencia, vicepresidencia, los 18 ministerios y cuatro departamentos administrativos) con políticos de los partidos que sortea una ruleta. Los ministerios van en orden de precedencia; el de Igualdad y Equidad no está porque la Corte Constitucional tumbó su ley de creación y el [Decreto 0626 de 2026](https://cancilleria.gov.co/normograma/compilacion/docs/decreto_0626_2026.htm) lo puso en liquidación desde junio de 2026. Cualquier político del partido sorteado puede ir en cualquier silla: el cargo no restringe nada.
 
 | Opción | Valores |
 | --- | --- |
 | **Reto diario** | Misma secuencia de partidos para todos (Mulberry32 sembrado con la fecha AAAAMMDD). Cronómetro y sin límite de turno. Racha y récord de tiempo; solo cuenta el primer intento. |
-| **Temporizador** | **Sin tiempo** (cronómetro que cuenta para el récord), **15 s por turno** (si se acaba, es un error y sale otro partido) o **Contrarreloj 2 min** (todo el gabinete). |
+| **Temporizador** | **Sin tiempo** (cronómetro que cuenta para el récord), **15 s por turno** (si se acaba, es un error y sale otro partido) o **Contrarreloj 5 min** (todo el gabinete: unos 12 s por silla, como los 2 min que había con 11 sillas). |
 | **Dificultad** | **Normal**: sugerencias con foto desde 2 letras. **Difícil**: sugerencias solo desde 3 letras. |
 | **Comodines** | Dos «Re-sortear partido», que cambian el partido sin costar error. |
 | **Errores** | Nombrar a alguien que no militó en el partido sorteado, repetir a alguien ya nombrado y que se acabe el turno. Con 3 errores pierdes. |
@@ -275,7 +275,7 @@ Tercer juego de Urna (ruta `#/gabinete`). Hay que llenar las 11 sillas del gobie
 
 **Candidatos.** Juega toda la base de datos, con o sin foto: cada político sale en el sorteo de cada uno de sus partidos (`partidos`). Quien no tiene partido registrado no sale en la ruleta, pero se puede escribir su nombre y sería un error. Sin foto (o si falla al cargar), la silla muestra las iniciales.
 
-**Código.** `src/gabinete/` (motor puro en `engine.ts`, reto diario en `daily.ts`, estadísticas en `stats.ts`, reloj en `useGabinete.ts`), `src/components/Gabinete*.tsx` y `Ruleta.tsx`. Pruebas: `npm run validate:gabinete` (sorteo, reto diario, reglas, temporizadores, un robot que juega 200 partidas y que toda foto registrada exista).
+**Código.** `src/gabinete/` (motor puro en `engine.ts`, reto diario en `daily.ts`, estadísticas en `stats.ts`, reloj en `useGabinete.ts`), `src/components/Gabinete*.tsx` y `Ruleta.tsx`. Pruebas: `npm run validate:gabinete` (las 24 sillas, sorteo, reto diario, reglas, temporizadores, un robot que juega 200 partidas y que toda foto registrada exista).
 
 ## Logos de partidos
 
