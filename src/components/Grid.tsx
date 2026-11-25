@@ -16,17 +16,17 @@ export function Grid({
 
   return (
     <div
-      className="grid grid-cols-[minmax(5rem,0.95fr)_repeat(3,minmax(0,1fr))] gap-1.5 sm:grid-cols-[minmax(7rem,0.9fr)_repeat(3,minmax(0,1fr))] sm:gap-2.5"
+      className="grid grid-cols-[minmax(4.75rem,0.9fr)_repeat(3,minmax(0,1fr))] gap-1.5 sm:grid-cols-[minmax(7.5rem,0.85fr)_repeat(3,minmax(0,1fr))] sm:gap-2.5"
       role="group"
       aria-label="Tablero de 3 por 3"
     >
       <div aria-hidden="true" />
       {cols.map((c) => (
-        <CriterionHeader key={c.id} criterion={c} />
+        <CriterionHeader key={c.id} criterion={c} eje="columna" />
       ))}
       {rows.map((row, r) => (
         <Fragment key={row.id}>
-          <CriterionHeader criterion={row} />
+          <CriterionHeader criterion={row} eje="fila" />
           {[0, 1, 2].map((c) => {
             const cell = r * 3 + c
             const placed = state.cells[cell]

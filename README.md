@@ -10,7 +10,7 @@ Todo corre en el cliente: sin backend, con estadísticas y racha diaria en `loca
 
 Se puede **instalar como app** desde el navegador del celular y vuelve a abrir sin conexión (`public/manifest.webmanifest` e `public/sw.js`: la red primero y la copia guardada si no hay señal). El service worker solo se registra en la versión compilada (`npm run build`), no en `npm run dev`.
 
-**Stack:** React 19 + Vite + TypeScript + Tailwind CSS v4 (modo oscuro) + `lucide-react`.
+**Stack:** React 19 + Vite + TypeScript + Tailwind CSS v4 (modo oscuro) + `lucide-react`, con la fuente Archivo de Google Fonts.
 
 ```bash
 npm install
@@ -25,6 +25,15 @@ npm run logos      # descarga logos de partidos a public/parties/
 npm run congreso   # baja de Congreso Visible los listados y perfiles de congresistas (scripts/.cache/cv/)
 npm run congreso:generar  # cruza esos perfiles con la base y reescribe records/congresistas.ts
 ```
+
+## Diseño: «Noche electoral»
+
+El escenario es el estudio de una noche de elecciones y lo que se juega se ve como papel electoral. El diseño de referencia (guía de estilo y pantallas) está en un lienzo de Claude Design, en la página «Rediseño · Noche electoral».
+
+- **Color** (`src/index.css`, `@theme`): azul noche `ink` #080D1E, superficies `panel` #0F1830, `line` #263559, oro `gold` #FFCD1C para la acción y azul `cyan` #6B8DFF para tiempo y pistas. El papel (`papel` #F4F0E6, `tinta` #101632, `tinta-2`, `tinta-azul`, `tinta-roja`) se usa para el tarjetón de Grid, el boletín de Top 10, la papeleta del reto diario y las sillas ocupadas del Gabinete. Los grises `slate` están ajustados hacia el azul.
+- **Firma**: la franja tricolor 2 : 1 : 1 (`<Franja />`), arriba de la barra, en los papeles y en las ventanas.
+- **Letra**: Archivo, de Google Fonts, con eje de ancho. `font-display` la usa condensada, en negrita y mayúsculas para títulos y cifras del marcador.
+- **Piezas comunes**: `btn-primary`, `btn-secondary`, `btn-tinta`, `tag`, `etiqueta`, `papel` y `tachado` (utilidades en `src/index.css`); `Marcador`, `Cifra`, `Sello`, `Chip` y `Segmented` (`src/components/ui.tsx`); `Papeleta`, `PanelLibre`, `Ayuda` y `EstadoReto` (`src/components/MenuPiezas.tsx`).
 
 ## Rutas
 

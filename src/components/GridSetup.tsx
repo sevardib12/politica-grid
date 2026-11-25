@@ -1,10 +1,9 @@
-import { CalendarDays, ChevronDown, Flame, Play } from 'lucide-react'
-import { useState } from 'react'
 import { POLITICIANS } from '../data/politicians.ts'
 import { currentStreak, dailyDifficulty, dateKey, formatDuration, type Stats } from '../game/stats.ts'
 import type { GridSettings } from '../routing/settings.ts'
 import { DIFFICULTIES } from '../utils/gridGenerator.ts'
 import { DIFFICULTY_HINT, DIFFICULTY_LABEL } from './labels.ts'
+import { Ayuda, Despliegue, PanelLibre, Papeleta } from './MenuPiezas.tsx'
 import { Segmented } from './ui.tsx'
 
 const MODE_TEXT =
@@ -24,7 +23,6 @@ export function GridSetup({
   onPlay: () => void
   onPlayDaily: () => void
 }) {
-  const [help, setHelp] = useState(false)
   const today = dateKey()
   const todayResult = stats.daily[today]
   const streak = currentStreak(stats.daily)
@@ -32,52 +30,31 @@ export function GridSetup({
   const dateLabel = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })
 
   return (
-    <div className="space-y-4">
-      <section
-        aria-labelledby="diario"
-        className="overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-br from-gold/10 via-panel to-panel p-5"
-      >
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h3 id="diario" className="flex items-center gap-2 text-lg font-extrabold text-gold">
-              <CalendarDays size={20} aria-hidden="true" /> Reto diario
-            </h3>
-            <p className="mt-1 text-sm text-slate-300 first-letter:uppercase">
-              {dateLabel} · {DIFFICULTY_LABEL[dailyLevel]}
-            </p>
-          </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-ink/60 px-3 py-1.5 text-sm font-bold text-gold" title="Días seguidos con el reto diario ganado">
-            <Flame size={16} aria-hidden="true" /> Racha: {streak}
-          </div>
-        </div>
-        {todayResult ? (
-          <p className="mt-3 rounded-xl bg-ink/50 px-3 py-2 text-sm text-slate-200">
-            {todayResult.won
-              ? `Hoy lo ganaste en ${formatDuration(todayResult.ms)}.`
-              : `Hoy completaste ${todayResult.filled}/9 casillas.`}{' '}
-            Puedes repetirlo, pero solo cuenta el primer intento.
-          </p>
-        ) : (
-          <p className="mt-3 text-sm text-slate-300">El mismo tablero para todos, cada día uno nuevo.</p>
-        )}
-        <button
-          type="button"
-          onClick={onPlayDaily}
-          className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-gold px-5 py-2.5 text-sm font-extrabold text-ink transition hover:brightness-110 active:scale-[0.98]"
+    <Despliegue
+      papeleta={
+        <Papeleta
+          id="diario"
+          fecha={dateLabel}
+          datos={[
+            { etiqueta: 'Racha', valor: `${streak} ${streak === 1 ? 'día' : 'días'}`, title: 'Días seguidos con el reto diario ganado' },
+            { etiqueta: 'Dificultad', valor: DIFFICULTY_LABEL[dailyLevel], title: 'Dificultad del tablero de hoy' },
+          ]}
+          boton={todayResult ? 'Repetir reto diario' : 'Jugar reto diario'}
+          onJugar={onPlayDaily}
         >
-          <Play size={16} aria-hidden="true" fill="currentColor" />
-          {todayResult ? 'Repetir reto diario' : 'Jugar reto diario'}
-        </button>
-      </section>
-
-      <section aria-labelledby="partida" className="rounded-3xl border border-line bg-ink/40 p-5">
-        <h3 id="partida" className="mb-4 text-lg font-extrabold text-slate-50">
-          Partida libre
-        </h3>
-
-        <div className="space-y-5">
-          <p className="-mb-1 text-sm leading-relaxed text-slate-300">{MODE_TEXT}</p>
-
+          {todayResult ? (
+            <p className="rounded-md bg-tinta/[0.06] px-3 py-2">
+              {todayResult.won ? `Hoy lo ganaste en ${formatDuration(todayResult.ms)}.` : `Hoy completaste ${todayResult.filled}/9 casillas.`}{' '}
+              Puedes repetirlo, pero solo cuenta el primer intento.
+            </p>
+          ) : (
+            <p>El mismo tablero para todos, cada día uno nuevo.</p>
+          )}
+        </Papeleta>
+      }
+      libre={
+        <PanelLibre id="partida" onJugar={onPlay}>
+          <p className="-mt-1 text-[15px] leading-relaxed text-slate-300">{MODE_TEXT}</p>
           <Segmented
             label="Temporizador (por turno)"
             value={settings.timer}
@@ -89,52 +66,34 @@ export function GridSetup({
               { value: 40, label: '40 s' },
             ]}
           />
-
-          <Segmented
-            label="Dificultad"
-            value={settings.difficulty}
-            onChange={(difficulty) => onSettings({ ...settings, difficulty })}
-            options={DIFFICULTIES.map((d) => ({ value: d, label: DIFFICULTY_LABEL[d] }))}
-          />
-          <p className="-mt-3 text-xs text-slate-400">{DIFFICULTY_HINT[settings.difficulty]} en la base de datos.</p>
-        </div>
-
-        <button
-          type="button"
-          onClick={onPlay}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gold px-5 py-3.5 text-base font-extrabold text-ink transition hover:brightness-110 active:scale-[0.99]"
-        >
-          <Play size={18} aria-hidden="true" fill="currentColor" /> Jugar
-        </button>
-      </section>
-
-      <section className="rounded-3xl border border-line bg-ink/40">
-        <button
-          type="button"
-          onClick={() => setHelp((v) => !v)}
-          aria-expanded={help}
-          className="flex w-full items-center justify-between px-5 py-4 text-left text-sm font-bold text-slate-100"
-        >
-          Cómo se juega
-          <ChevronDown size={18} className={`transition ${help ? 'rotate-180' : ''}`} aria-hidden="true" />
-        </button>
-        {help && (
-          <ul className="space-y-2 px-5 pb-5 text-sm leading-relaxed text-slate-300">
-            <li>
-              Cada casilla cruza el criterio de su fila con el de su columna: por ejemplo, <em>Senador/a</em> × <em>Partido Liberal</em>.
-            </li>
-            <li>Ubica en cada casilla a un político que cumpla los dos criterios. No puedes repetir políticos.</li>
-            <li>Los tableros siempre tienen solución: hay al menos 9 políticos distintos que llenan las 9 casillas.</li>
-            <li>El temporizador es por turno: si se acaba, termina la partida.</li>
-            <li>Al terminar puedes tocar cualquier casilla para ver todos los políticos que la cumplían y por qué.</li>
-          </ul>
-        )}
-      </section>
-
-      <p className="px-1 text-center text-xs text-slate-500">
-        {POLITICIANS.length} políticos en la base de datos. Hecha para jugar y aprender: si ves un dato incorrecto, es un error de la
-        base y no de tu respuesta.
-      </p>
-    </div>
+          <div>
+            <Segmented
+              label="Dificultad"
+              value={settings.difficulty}
+              onChange={(difficulty) => onSettings({ ...settings, difficulty })}
+              options={DIFFICULTIES.map((d) => ({ value: d, label: DIFFICULTY_LABEL[d] }))}
+            />
+            <p className="mt-2 text-[13px] text-slate-400">{DIFFICULTY_HINT[settings.difficulty]} en la base de datos.</p>
+          </div>
+        </PanelLibre>
+      }
+      ayuda={
+        <Ayuda>
+          <li>
+            Cada casilla cruza el criterio de su fila con el de su columna: por ejemplo, <em>Senador/a</em> × <em>Partido Liberal</em>.
+          </li>
+          <li>Ubica en cada casilla a un político que cumpla los dos criterios. No puedes repetir políticos.</li>
+          <li>Los tableros siempre tienen solución: hay al menos 9 políticos distintos que llenan las 9 casillas.</li>
+          <li>El temporizador es por turno: si se acaba, termina la partida.</li>
+          <li>Al terminar puedes tocar cualquier casilla para ver todos los políticos que la cumplían y por qué.</li>
+        </Ayuda>
+      }
+      nota={
+        <>
+          {POLITICIANS.length.toLocaleString('es-CO')} políticos en la base de datos. Hecha para jugar y aprender: si ves un dato incorrecto,
+          es un error de la base y no de tu respuesta.
+        </>
+      }
+    />
   )
 }
