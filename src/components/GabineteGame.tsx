@@ -390,7 +390,19 @@ export function GabineteGame({
   const elegido = estado.candidato ? pool.porId.get(estado.candidato) : undefined
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 pb-10 pt-4 sm:px-6 sm:pt-6">
+    <div className="relative">
+      {/* Fachada de la Casa de Nariño, de Claude Design: detrás de todo, sin interceptar clics. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage: `url(${import.meta.env.BASE_URL}fondos/casa-de-narino.webp)`,
+          backgroundPosition: 'center top',
+          backgroundSize: '2000px auto',
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
+    <div className="relative mx-auto w-full max-w-6xl px-4 pb-10 pt-4 sm:px-6 sm:pt-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <button type="button" onClick={onExit} className="btn-secondary">
           <ArrowLeft size={16} aria-hidden="true" /> Cambiar juego
@@ -514,6 +526,7 @@ export function GabineteGame({
           <Organigrama estado={estado} pool={pool} puedeNombrar={Boolean(elegido) && jugando} onUbicar={game.ubicar} />
         </div>
       </div>
+    </div>
     </div>
   )
 }

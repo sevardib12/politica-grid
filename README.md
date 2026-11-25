@@ -34,6 +34,7 @@ El escenario es el estudio de una noche de elecciones y lo que se juega se ve co
 - **Firma**: la franja tricolor 2 : 1 : 1 (`<Franja />`), arriba de la barra, en los papeles y en las ventanas.
 - **Letra**: Archivo, de Google Fonts, con eje de ancho. `font-display` la usa condensada, en negrita y mayúsculas para títulos y cifras del marcador.
 - **Piezas comunes**: `btn-primary`, `btn-secondary`, `btn-tinta`, `tag`, `etiqueta`, `papel` y `tachado` (utilidades en `src/index.css`); `Marcador`, `Cifra`, `Sello`, `Chip` y `Segmented` (`src/components/ui.tsx`); `Papeleta`, `PanelLibre`, `Ayuda` y `EstadoReto` (`src/components/MenuPiezas.tsx`).
+- **Fondo de Arma el Gabinete**: una ilustración nocturna de la fachada de la Casa de Nariño (`public/fondos/casa-de-narino.webp`, 2000 × 1800), centrada arriba, detrás del contenido. Llegó desde el lienzo de Design; su origen y licencia no están verificados, así que conviene confirmarlos antes de publicar en otro lugar.
 
 ## Rutas
 
