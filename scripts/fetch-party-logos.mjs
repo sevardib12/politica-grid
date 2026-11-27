@@ -64,6 +64,8 @@ const HINTS = {
   mais: { es: ['Movimiento Alternativo Indígena y Social'], en: ['Alternative Indigenous and Social Movement'] },
   comunes: { es: ['Comunes (partido político)', 'Partido Comunes'], en: ['Comunes'] },
   'union-patriotica': { es: ['Unión Patriótica (Colombia)', 'Unión Patriótica'], en: ['Patriotic Union (Colombia)'] },
+  'partido-comunista': { es: ['Partido Comunista Colombiano'], en: ['Colombian Communist Party'] },
+  progresistas: { skip: 'Wikipedia no tiene artículo propio: «Movimiento Progresistas» redirige a Colombia Humana' },
   'salvacion-nacional': { es: ['Movimiento de Salvación Nacional'], en: ['National Salvation Movement'] },
   'compromiso-ciudadano': { es: ['Compromiso Ciudadano'], en: [] },
   'primero-colombia': { es: ['Primero Colombia'], en: [] },

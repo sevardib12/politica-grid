@@ -1834,6 +1834,7 @@ interface Complemento {
 const COMPLEMENTOS: Record<string, Complemento> = {
   "zuluaga-oscar-ivan": {"senador":true}, // Óscar Iván Zuluaga
   "fernandez-quessep-jairo": {"deptos":["Sucre"]}, // Jairo Alfredo Fernandez Quessep
+  "pabon-pabon-rosemberg": {"partidos":"M19"}, // Rosemberg Pabón Pabón: constituyente de 1991 por la AD M-19 (Semana, 2011)
   "custodio-cabrera-angel": {"deptos":["Bogotá"],"partidos":"CR"}, // Ángel Custodio Cabrera
   "zuleta-bechara-erasmo": {"deptos":["Córdoba"],"partidos":"U"}, // Erasmo Elías Zuleta Bechara
   "ortiz-zorro-cesar": {"decadas":"2010s"}, // Cesar Augusto Ortiz Zorro

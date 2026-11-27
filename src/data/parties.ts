@@ -149,6 +149,20 @@ const BASE: Record<Partido, PartyBase> = {
     color_primario: '#F2C200',
     color_secundario: '#D32F2F',
   },
+  'Partido Comunista Colombiano': {
+    id: 'partido-comunista',
+    nombre: 'Partido Comunista Colombiano',
+    sigla: 'PCC',
+    color_primario: '#B71C1C',
+    color_secundario: '#FFD54F',
+  },
+  'Progresistas': {
+    id: 'progresistas',
+    nombre: 'Progresistas',
+    sigla: 'PRO',
+    color_primario: '#0E7490',
+    color_secundario: '#FFFFFF',
+  },
   'Salvación Nacional': {
     id: 'salvacion-nacional',
     nombre: 'Movimiento de Salvación Nacional',

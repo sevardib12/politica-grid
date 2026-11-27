@@ -8,6 +8,10 @@ import { regional } from './records/regional.ts'
 import { ministros } from './records/ministros.ts'
 import { administrativos } from './records/administrativos.ts'
 import { congresistas, conComplementos } from './records/congresistas.ts'
+import { m19 } from './records/m19.ts'
+import { up } from './records/up.ts'
+import { ministrosTablas } from './records/ministros-tablas.ts'
+import { CORRECCIONES, conCorreccion } from './records/correcciones.ts'
 import { FOTOS } from './photos.ts'
 
 export type { Politician } from './types.ts'
@@ -24,14 +28,20 @@ export type { Politician } from './types.ts'
 const SIN_FOTO: readonly Politician[] = [
   ...presidencia,
   ...congreso,
+  ...m19,
+  ...up,
   ...mesas,
   ...territorial,
   ...gabinete,
   ...ministros,
+  ...ministrosTablas,
   ...administrativos,
   ...regional,
   ...congresistas,
-].map(conComplementos)
+]
+  .map(conComplementos)
+  // Partidos verificados que corrigen la fuente original (coaliciones, militancia real): ver records/correcciones.ts.
+  .map(conCorreccion)
 
 // Los retratos (`foto_url`, `foto_fuente`, `foto_origen`) los genera
 // `scripts/fetch-official-photos.mjs` en `photos.ts`; aquí se fusionan con
@@ -44,6 +54,9 @@ const ids = new Set<string>()
 for (const p of POLITICIANS) {
   if (ids.has(p.id)) throw new Error(`id duplicado en la base de datos: ${p.id}`)
   ids.add(p.id)
+}
+for (const id of Object.keys(CORRECCIONES)) {
+  if (!ids.has(id)) throw new Error(`corrección para un id que no existe: ${id}`)
 }
 
 export const POLITICIANS_BY_ID: ReadonlyMap<string, Politician> = new Map(

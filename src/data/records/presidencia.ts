@@ -551,6 +551,7 @@ export const presidencia = [
     presidencial: { formula_vicepresidencial: true, vicepresidente: true },
     ejecutivo: { ministerios: ['Trabajo'], gobiernos_gabinete: ['Pastrana'], embajador: true },
     decadas: d('2000s-2020s'),
+    hitos: ['Constituyente de 1991'],
   }),
   build({
     id: 'bell-lemus-gustavo',

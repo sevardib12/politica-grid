@@ -24,7 +24,8 @@ export type Region = (typeof REGIONES)[number] | 'Sin dato'
 export const DECADAS = ['1980s', '1990s', '2000s', '2010s', '2020s'] as const
 export type Decada = (typeof DECADAS)[number]
 
-export type Genero = 'Masculino' | 'Femenino'
+/** «Sin dato»: la fuente no dice el género; no se infiere por el nombre. */
+export type Genero = 'Masculino' | 'Femenino' | 'Sin dato'
 
 export const PARTIDOS = [
   'Partido Liberal',
@@ -43,6 +44,11 @@ export const PARTIDOS = [
   'MAIS',
   'Comunes',
   'Unión Patriótica',
+  // Fusionado en el Pacto Histórico en 2025 (Wikipedia: «Partido Comunista Colombiano», ficha: sucesor).
+  'Partido Comunista Colombiano',
+  // Dos etapas con el mismo nombre: el movimiento de Petro (2011), antecedente de Colombia Humana, y el
+  // partido que en diciembre de 2025 se sumó al Pacto Histórico (escisión del MAIS).
+  'Progresistas',
   'Salvación Nacional',
   'Compromiso Ciudadano',
   'Primero Colombia',

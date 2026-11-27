@@ -277,6 +277,7 @@ const CODIGOS: Record<string, string> = {
   MAIS: 'MAIS', Comunes: 'COM', 'Unión Patriótica': 'UP', 'Salvación Nacional': 'SN', 'Compromiso Ciudadano': 'CCI', 'Primero Colombia': 'P1', 'Nueva Fuerza Democrática': 'NFD',
   'Sí Colombia': 'SIC', 'Verde Oxígeno': 'VO', Creemos: 'CRE', 'Liga de Gobernantes Anticorrupción': 'LGA', 'Defensores de la Patria': 'DP', 'Colombia Democrática': 'CDE',
   'Colombia Justa Libres': 'CJL', 'Alianza Social Independiente': 'ASI', 'Colombianas y Colombianos por la Paz': 'CCP', 'Fuerza Ciudadana': 'FC', 'Opción Ciudadana': 'OC',
+  'Partido Comunista Colombiano': 'PCC', Progresistas: 'PRO',
 }
 const cod = (ps: string[]) => ps.map((p) => { const c = CODIGOS[p]; if (!c) throw new Error('partido sin código: ' + p); return c })
 const rangos = (ds: string[]) => {
