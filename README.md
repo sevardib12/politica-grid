@@ -281,7 +281,7 @@ Tercer juego de Urna (ruta `#/gabinete`). Hay que llenar las 24 sillas del gobie
 | **Comodines** | Dos «Re-sortear partido», que cambian el partido sin costar error. |
 | **Errores** | Nombrar a alguien que no militó en el partido sorteado, repetir a alguien ya nombrado y que se acabe el turno. Con 3 errores pierdes. |
 
-**Sorteo.** Cada giro elige un partido con probabilidad proporcional a sus políticos sin usar (`src/utils/cabinetRandomizer.ts`): búsqueda binaria sobre los pesos acumulados, y solo entran partidos con al menos un disponible. La partida libre usa `crypto.getRandomValues`; el reto diario, Mulberry32 con la fecha. La secuencia del día se genera con la misma regla, consumiendo un político por giro (`src/gabinete/daily.ts`), así no depende de lo que haga cada jugador.
+**Sorteo.** Cada giro elige un partido con la misma probabilidad que los demás, entre los que todavía tienen al menos un político sin usar (`elegirUniforme` en `src/utils/cabinetRandomizer.ts`). El número de políticos de cada partido no pesa: un partido chico sale tanto como el Liberal. La partida libre usa `crypto.getRandomValues`; el reto diario, Mulberry32 con la fecha. La secuencia del día sigue la misma regla y consume un político por giro (`src/gabinete/daily.ts`), así no depende de lo que haga cada jugador.
 
 **Candidatos.** Juega toda la base de datos, con o sin foto: cada político sale en el sorteo de cada uno de sus partidos (`partidos`). Quien no tiene partido registrado no sale en la ruleta, pero se puede escribir su nombre y sería un error. Sin foto (o si falla al cargar), la silla muestra las iniciales.
 

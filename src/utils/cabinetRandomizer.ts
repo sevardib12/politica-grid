@@ -4,9 +4,9 @@
 // · Reto diario: Mulberry32 sembrado con la fecha (AAAA-MM-DD → AAAAMMDD), así todos ven la misma
 //   secuencia de partidos ese día.
 //
-// Cada giro elige un partido con probabilidad proporcional a sus políticos disponibles (los que
-// todavía no están en el gabinete). Se usa búsqueda binaria sobre los pesos acumulados, y solo
-// entran partidos con al menos un disponible: nunca sale uno sin miembros.
+// Cada giro elige un partido con la misma probabilidad que los demás, entre los que todavía tienen
+// al menos un político disponible (uno que no esté ya en el gabinete). Cuántos políticos tiene cada
+// partido no cuenta: un partido chico sale tanto como el más grande.
 
 /** Número en [0, 1). */
 export type Rng = () => number
@@ -36,33 +36,10 @@ export function semillaDeFecha(key: string): number {
 }
 
 /**
- * Índice del primer elemento cuyo peso acumulado supera `r`. `acumulados` debe ser estrictamente
- * creciente (solo pesos positivos). Búsqueda binaria: O(log n).
+ * Elige una opción con la misma probabilidad para todas. Devuelve `null` si no hay ninguna.
  */
-export function indiceAcumulado(acumulados: readonly number[], r: number): number {
-  let lo = 0
-  let hi = acumulados.length - 1
-  while (lo < hi) {
-    const mid = (lo + hi) >> 1
-    if (acumulados[mid] > r) hi = mid
-    else lo = mid + 1
-  }
-  return lo
-}
-
-/**
- * Elige una opción con probabilidad proporcional a su peso. Ignora pesos no positivos. Devuelve
- * `null` si no hay ninguna opción con peso.
- */
-export function elegirPonderado<T>(opciones: readonly { valor: T; peso: number }[], rng: Rng): T | null {
-  const validas = opciones.filter((o) => o.peso > 0)
-  if (validas.length === 0) return null
-  const acumulados: number[] = []
-  let total = 0
-  for (const o of validas) {
-    total += o.peso
-    acumulados.push(total)
-  }
-  const r = rng() * total
-  return validas[indiceAcumulado(acumulados, r)].valor
+export function elegirUniforme<T>(opciones: readonly T[], rng: Rng): T | null {
+  if (opciones.length === 0) return null
+  const indice = Math.min(Math.floor(rng() * opciones.length), opciones.length - 1)
+  return opciones[indice]
 }

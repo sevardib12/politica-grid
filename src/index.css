@@ -309,3 +309,13 @@ button:disabled {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* La tira de la ruleta baja desde arriba y para en el sorteado (ver Ruleta.tsx): --fin es su posición final. */
+@keyframes ruleta-girar {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(var(--fin));
+  }
+}

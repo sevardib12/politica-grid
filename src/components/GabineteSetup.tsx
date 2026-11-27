@@ -92,8 +92,8 @@ export function GabineteSetup({
       ayuda={
         <Ayuda>
           <li>
-            Cada giro sortea un partido. Su probabilidad depende de cuántos de sus políticos quedan sin usar: los partidos con más miembros
-            salen más.
+            Cada giro sortea un partido con la misma probabilidad para todos, mientras les quede algún político sin usar: el número de miembros
+            no cuenta.
           </li>
           <li>
             Elige a un político del partido sorteado y toca una silla libre. Puedes ponerlo en cualquier silla; el cargo no restringe nada.

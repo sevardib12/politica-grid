@@ -1,4 +1,4 @@
-// Valida «Arma el Gabinete»: fotos del juego, sorteo ponderado, reto diario, reglas de la partida y
+// Valida «Arma el Gabinete»: fotos del juego, sorteo uniforme, reto diario, reglas de la partida y
 // un robot que juega hasta el final. Uso: npm run validate:gabinete
 import { existsSync } from 'node:fs'
 import path from 'node:path'
@@ -9,7 +9,7 @@ import { secuenciaDiaria } from '../src/gabinete/daily.ts'
 import { iniciarGabinete, reducirGabinete, disponiblesDelPartido, MAX_ERRORES, MS_CONTRARRELOJ, SEGUNDOS_TURNO, type ConfigGabinete, type Contexto, type EstadoGabinete } from '../src/gabinete/engine.ts'
 import { SILLAS } from '../src/gabinete/posts.ts'
 import { registrarPartida, rachaDiaria, statsVacias } from '../src/gabinete/stats.ts'
-import { mulberry32, elegirPonderado } from '../src/utils/cabinetRandomizer.ts'
+import { mulberry32, elegirUniforme } from '../src/utils/cabinetRandomizer.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 let fallos = 0
@@ -35,28 +35,31 @@ comprobar('Cada silla tiene un cargo distinto', new Set(SILLAS.map((s) => s.id))
 comprobar('Están los 18 ministerios en funcionamiento (sin el de Igualdad, en liquidación)', SILLAS.filter((s) => s.nivel === 2).length === 18, `${SILLAS.filter((s) => s.nivel === 2).length}`)
 comprobar('El organigrama tiene 24 sillas: 2 de cúpula, 18 ministerios y 4 departamentos', SILLAS.length === 24 && SILLAS.filter((s) => s.nivel === 1).length === 2 && SILLAS.filter((s) => s.nivel === 3).length === 4, `${SILLAS.length}`)
 
-// ── 2. Sorteo ponderado ───────────────────────────────────────────────────
+// ── 2. Sorteo uniforme entre partidos con disponibles ─────────────────────
 {
   const rng = mulberry32(7)
-  const usados = new Set<string>()
-  let fueraDeRango = 0
+  const N = 30000
   const conteo = new Map<string, number>()
-  for (let i = 0; i < 20000; i++) {
-    const opciones = pool.partidos
-      .map((partido) => ({ valor: partido, peso: (pool.porPartido.get(partido) ?? []).filter((p) => !usados.has(p.id)).length }))
-    const elegido = elegirPonderado(opciones, rng)
+  for (let i = 0; i < N; i++) {
+    const elegido = elegirUniforme(pool.partidos, rng) // cada giro independiente: ninguna silla ocupada
     if (elegido === null) break
-    const disponibles = (pool.porPartido.get(elegido) ?? []).filter((p) => !usados.has(p.id)).length
-    if (disponibles === 0) fueraDeRango++
     conteo.set(elegido, (conteo.get(elegido) ?? 0) + 1)
-    usados.clear() // cada giro independiente: ninguna silla ocupada
   }
-  comprobar('Nunca sale un partido sin miembros disponibles', fueraDeRango === 0, `${fueraDeRango} casos`)
-  // Proporcionalidad: con pesos iguales a los disponibles, el partido con más miembros sale más.
-  const ordenados = [...pool.partidos].sort((a, b) => (pool.porPartido.get(b)?.length ?? 0) - (pool.porPartido.get(a)?.length ?? 0))
-  const grande = ordenados[0]
-  const pequeno = ordenados[ordenados.length - 1]
-  comprobar('El partido más grande sale más que el más pequeño', (conteo.get(grande) ?? 0) > (conteo.get(pequeno) ?? 0), `${grande}: ${conteo.get(grande)} · ${pequeno}: ${conteo.get(pequeno)}`)
+  const esperado = N / pool.partidos.length
+  const cuentas = pool.partidos.map((p) => conteo.get(p) ?? 0)
+  const minimo = Math.min(...cuentas)
+  const maximo = Math.max(...cuentas)
+  comprobar(
+    'Cada partido sale con la misma probabilidad (±20 % de lo esperado)',
+    minimo >= esperado * 0.8 && maximo <= esperado * 1.2,
+    `de ${minimo} a ${maximo} giros; lo esperado: ${Math.round(esperado)}`,
+  )
+  // Sin disponibles no sale: con todos los del Liberal ya usados, el Liberal deja de salir.
+  const usados = new Set((pool.porPartido.get('Partido Liberal') ?? []).map((p) => p.id))
+  const disponibles = pool.partidos.filter((p) => (pool.porPartido.get(p) ?? []).some((x) => !usados.has(x.id)))
+  let liberal = 0
+  for (let i = 0; i < 5000; i++) if (elegirUniforme(disponibles, rng) === 'Partido Liberal') liberal++
+  comprobar('Un partido agotado no vuelve a salir', !disponibles.includes('Partido Liberal') && liberal === 0, `${disponibles.length} partidos con disponibles`)
 }
 
 // ── 3. Reto diario ────────────────────────────────────────────────────────
@@ -69,6 +72,15 @@ comprobar('El organigrama tiene 24 sillas: 2 de cúpula, 18 ministerios y 4 depa
   comprobar('La secuencia solo trae partidos con candidatos', a.every((x) => pool.porPartido.has(x)))
   const inicial = iniciarGabinete(cfg({ daily: true, dateKey: '2026-11-18' }), ctxCon(1), 0)
   comprobar('La primera tirada del reto es la primera de la secuencia', inicial.partido === a[0], `${inicial.partido}`)
+  // En 30 días distintos, ningún partido se come más de un 10 % de la secuencia del día.
+  let pico = 0
+  for (let d = 1; d <= 30; d++) {
+    const seq = secuenciaDiaria(`2026-11-${String(d).padStart(2, '0')}`, pool)
+    const cuenta = new Map<string, number>()
+    for (const x of seq) cuenta.set(x, (cuenta.get(x) ?? 0) + 1)
+    pico = Math.max(pico, Math.max(...cuenta.values()) / seq.length)
+  }
+  comprobar('En el reto diario ningún partido domina la secuencia (máximo 10 % de los giros)', pico <= 0.1, `el pico más alto: ${(100 * pico).toFixed(1)} %`)
 }
 
 // ── 4. Robot que juega hasta el final ─────────────────────────────────────

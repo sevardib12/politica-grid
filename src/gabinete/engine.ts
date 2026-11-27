@@ -1,5 +1,5 @@
 import type { Partido } from '../data/types.ts'
-import { elegirPonderado, type Rng } from '../utils/cabinetRandomizer.ts'
+import { elegirUniforme, type Rng } from '../utils/cabinetRandomizer.ts'
 import { TOTAL_SILLAS } from './posts.ts'
 import type { Pool } from './pool.ts'
 import { secuenciaDiaria } from './daily.ts'
@@ -104,7 +104,7 @@ export function disponibilidad(pool: Pool, usadosIds: ReadonlySet<string>, exclu
   return out
 }
 
-/** Sortea el siguiente partido: la secuencia del día en el reto diario; si no, al azar ponderado. */
+/** Sortea el siguiente partido: la secuencia del día en el reto diario; si no, al azar, igual para todos los disponibles. */
 function sortear(estado: EstadoGabinete, ctx: Contexto, excluir?: Partido | null): { partido: Partido; indice: number } | null {
   const disp = disponibilidad(ctx.pool, usados(estado), excluir)
   if (disp.length === 0) return null
@@ -117,8 +117,8 @@ function sortear(estado: EstadoGabinete, ctx: Contexto, excluir?: Partido | null
     // Secuencia agotada (no debería pasar): el primer partido disponible, de forma determinista.
     return { partido: disp[0].partido, indice: estado.indiceSecuencia }
   }
-  const elegido = elegirPonderado(
-    disp.map((d) => ({ valor: d.partido, peso: d.disponibles })),
+  const elegido = elegirUniforme(
+    disp.map((d) => d.partido),
     ctx.rng,
   )
   return elegido ? { partido: elegido, indice: estado.indiceSecuencia } : null

@@ -13,6 +13,7 @@ import type { Politician } from '../data/types.ts'
 import { PartyLogo } from './PartyLogo.tsx'
 import { PoliticianAvatar } from './PoliticianAvatar.tsx'
 import { Ruleta } from './Ruleta.tsx'
+import { useGiro } from './giro.ts'
 import { Chip, Cifra, Franja, Marcador } from './ui.tsx'
 
 const CONFIRMAR_MS = 4000
@@ -83,7 +84,17 @@ function Hud({ estado, restanteMs, transcurridoMs }: { estado: EstadoGabinete; r
 }
 
 /** Re-sortear y rendirse (rendirse pide un segundo toque). */
-function Acciones({ estado, onResortear, onRendirse }: { estado: EstadoGabinete; onResortear: () => void; onRendirse: () => void }) {
+function Acciones({
+  estado,
+  girando,
+  onResortear,
+  onRendirse,
+}: {
+  estado: EstadoGabinete
+  girando: boolean
+  onResortear: () => void
+  onRendirse: () => void
+}) {
   const [confirmar, setConfirmar] = useState(false)
 
   useEffect(() => {
@@ -94,7 +105,7 @@ function Acciones({ estado, onResortear, onRendirse }: { estado: EstadoGabinete;
 
   return (
     <div className="mt-3 grid grid-cols-2 gap-2">
-      <button type="button" onClick={onResortear} disabled={estado.resorteos <= 0} className="btn-secondary bg-ink px-2 disabled:opacity-40">
+      <button type="button" onClick={onResortear} disabled={estado.resorteos <= 0 || girando} className="btn-secondary bg-ink px-2 disabled:opacity-40">
         <RefreshCw size={16} aria-hidden="true" />
         <span>
           Re-sortear · {estado.resorteos}
@@ -336,6 +347,9 @@ export function GabineteGame({
   const game = useGabinete(config, pool, onFinish)
   const { estado, transcurridoMs, restanteMs } = game
   const jugando = estado.estado === 'jugando'
+  const giro = estado.turnoInicio % 1000003
+  // El partido nuevo no se muestra hasta que la ruleta para (ver useGiro).
+  const { girando, mostrado } = useGiro(estado.partido, giro)
   const ctx: Contexto = useMemo(() => ({ pool, rng: cryptoRng }), [pool])
   const usadosIds = useMemo(() => new Set(estado.sillas.filter((s): s is string => s !== null)), [estado.sillas])
 
@@ -355,10 +369,10 @@ export function GabineteGame({
   // Normal: sugerencias desde 2 letras. Difícil: desde 3 letras.
   const minimo = config.dificultad === 'dificil' ? 3 : 2
   const sugerencias = useMemo(() => {
-    if (!jugando || !estado.partido || !enfocado) return []
+    if (!jugando || girando || !estado.partido || !enfocado) return []
     if (texto.replace(/\s/g, '').length < minimo) return []
     return buscarEnPartido(pool, estado.partido, texto, usadosIds, 6)
-  }, [jugando, estado.partido, enfocado, texto, minimo, pool, usadosIds])
+  }, [jugando, girando, estado.partido, enfocado, texto, minimo, pool, usadosIds])
 
   const elegirSugerencia = (id: string) => {
     game.seleccionar(id)
@@ -435,8 +449,8 @@ export function GabineteGame({
               </h2>
               <Franja className="h-1 w-10" />
             </div>
-            <Ruleta partido={estado.partido} giro={estado.turnoInicio % 1000003} />
-            {jugando && <Acciones estado={estado} onResortear={game.resortear} onRendirse={game.rendirse} />}
+            <Ruleta partido={estado.partido} giro={giro} girando={girando} />
+            {jugando && <Acciones estado={estado} girando={girando} onResortear={game.resortear} onRendirse={game.rendirse} />}
           </section>
 
           {jugando && (
@@ -502,7 +516,8 @@ export function GabineteGame({
                       onFocus={() => setEnfocado(true)}
                       onBlur={() => setEnfocado(false)}
                       onKeyDown={onKeyDown}
-                      placeholder={estado.partido ? `Un político de ${estado.partido}…` : 'Escribe un nombre…'}
+                      placeholder={girando ? 'La ruleta está girando…' : mostrado ? `Un político de ${mostrado}…` : 'Escribe un nombre…'}
+                      disabled={girando}
                       autoComplete="off"
                       autoCorrect="off"
                       spellCheck={false}
@@ -510,13 +525,13 @@ export function GabineteGame({
                       className="min-h-[50px] w-full rounded-[10px] border border-line bg-panel px-3.5 text-base text-slate-50 placeholder:text-slate-500 focus:border-gold focus:outline-none"
                     />
                   </label>
-                  <button type="submit" className="btn-primary min-h-[50px] shrink-0 px-4">
+                  <button type="submit" disabled={girando} className="btn-primary min-h-[50px] shrink-0 px-4 disabled:pointer-events-none disabled:opacity-40">
                     Elegir
                   </button>
                 </div>
               </form>
               <p className="text-[13px] leading-relaxed text-slate-400">
-                Nombrar a alguien que no militó en {estado.partido ?? 'el partido'} cuesta un error, igual que repetir a alguien ya nombrado.
+                Nombrar a alguien que no militó en {mostrado ?? 'el partido'} cuesta un error, igual que repetir a alguien ya nombrado.
               </p>
             </section>
           )}
